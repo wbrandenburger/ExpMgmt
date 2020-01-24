@@ -80,8 +80,6 @@ setuptools.setup(
         optional=[
         ],
         develop=[
-            # - python development packages - 
-            "pylint",
             # "sphinx",
             # "sphinx-click",
             # "sphinx_rtd_theme",
