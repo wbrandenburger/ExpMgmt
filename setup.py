@@ -34,28 +34,6 @@ setuptools.setup(
         
         # - python development packages - 
         "pylint",
-        
-        # # - python deep learning packages -
-        # "tensorflow==1.*",
-        # "keras==2.2.5",
-        # # - python evaluation packages -
-        # # "pyqt==4.11.4"
-        # "numpy",
-        # "matplotlib",
-        # "jupyter",
-        # "opencv-python",
-        # "pillow",
-        # "scikit-learn",
-        # "scikit-image",
-        # "scipy",
-        # "h5py",
-        # "eventlet",
-        # "flask-socketio",
-        # "seaborn",
-        # "pandas",
-        # "ffmpeg",
-        # # "imageio=2.1.2"
-        # "moviepy",
 
         # - python project packages - 
         "colorama>=0.4",
