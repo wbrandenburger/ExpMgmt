@@ -227,6 +227,6 @@ _settings_default = { # default settings
     },
     "experiment": { 
         "local-dir": get_experiments_folder(),
-        "local-config-file": "%(local-dir)s\experiment.ini"
+        "local-config-file": "${local-dir}\experiment.ini"
     }
 }
