@@ -29,12 +29,10 @@ setuptools.setup(
     author=expmgmt.__author__,
     author_email=expmgmt.__email__,
     license=expmgmt.__license__,
-    url="https://github.com/wbrandenburger/MTPIA",
+    url="https://github.com/wbrandenburger/ExpMgmt",
     install_requires=[
-        
         # - python development packages - 
         "pylint",
-
         # - python project packages - 
         "colorama>=0.4",
         "click>=7.0.0",
