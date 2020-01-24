@@ -31,8 +31,6 @@ setuptools.setup(
     license=expmgmt.__license__,
     url="https://github.com/wbrandenburger/ExpMgmt",
     install_requires=[
-        # - python development packages - 
-        "pylint",
         # - python project packages - 
         "colorama>=0.4",
         "click>=7.0.0",
@@ -82,6 +80,8 @@ setuptools.setup(
         optional=[
         ],
         develop=[
+            # - python development packages - 
+            "pylint",
             # "sphinx",
             # "sphinx-click",
             # "sphinx_rtd_theme",
