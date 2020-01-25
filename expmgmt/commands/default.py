@@ -149,3 +149,7 @@ def run(
     )
     logger = logging.getLogger('default')
     logger.debug("Plattform '{0}' detected.".format(sys.platform))
+
+    mc = MultiCommand()
+    rv = mc.list_commands(None)
+    print(rv)
