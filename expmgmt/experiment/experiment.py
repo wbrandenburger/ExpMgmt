@@ -21,6 +21,7 @@ class Experiment:
             [glob.glob(os.path.expanduser(p)) for p in paths],
             []
         )
+
     #   method --------------------------------------------------------------
     # -----------------------------------------------------------------------
     def path_format(self):

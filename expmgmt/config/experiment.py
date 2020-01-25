@@ -78,10 +78,10 @@ def get_exp_from_name(expname):
         if name not in config.keys():
             raise Exception('Experiment {0} not defined'.format(expname))
         try:
-            paths = [os.path.expanduser(config[name]['local-dir'])] # @todo[to change]:
+            paths = [os.path.expanduser(config[name][ expmgmt.config.settings_default._LOCAL_DIR])]
         except KeyError:
             try:
-                paths = eval(os.path.expanduser(config[name].get("dirs")))
+                paths = eval(os.path.expanduser(config[name].get("dirs")))  # @todo[to change]:
             except SyntaxError as e:
                 raise Exception(
                     "To define a experiment you have to set either dir or dirs"
@@ -89,7 +89,6 @@ def get_exp_from_name(expname):
                     "Error: ({0})".format(e)
                 )
         experiment_obj = expmgmt.experiment.experiment.Experiment(expname, paths)
-
     return experiment_obj
 
 #   function ----------------------------------------------------------------
@@ -124,12 +123,14 @@ def get_exp():
     global _CURRENT_EXPERIMENT
 
     if os.environ.get("EXPMGMT_EXP"):
+        logger.debug("Environment variable EXPMGMT_EXP found with value '{0}'".format(os.environ.get("EXPMGMT_EXP")))
         set_exp_from_name(os.environ["EXPMGMT_EXP"]) # @todo[to change]:
 
     if _CURRENT_EXPERIMENT is None:
         # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
-        exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_EXP) # @todo[to change]:
+        exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_EXP)
         set_exp_from_name(exp)
 
     assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.experiment.experiment.Experiment))
+    
     return _CURRENT_EXPERIMENT

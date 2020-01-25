@@ -1,3 +1,6 @@
+# ===========================================================================
+#   list.py -----------------------------------------------------------------
+# ===========================================================================
 """
 This command is to list contents of a library.
 
@@ -66,77 +69,60 @@ Cli
     :prog: papis list
 """
 
+#   import ------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 import expmgmt.config.configfile
 import expmgmt.config.experiment
+import expmgmt.config.settings_default
 
-import os
 import click
-
 import logging
+import os
 
+#   settings ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 logger = logging.getLogger('list')
 
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def run(
-        exp=False,
+        exp=True,
     ):
     """Main method to the list command
 
     :return:: List different objects
     :rtype:  list
     """
-    if experiment is None:
-        experiment = expmgmt.config.experiment.get_exp():
 
     config = expmgmt.config.configfile.get_configuration()
 
-    if experiment:
+    if exp:
         return [
-            { 
-                "" : config[section]["exp-name"], 
-                "" :  config[section]["local-dir"]
-            } for section in config
+            "{0}:\t {1}".format(config[section][expmgmt.config.settings_default._EXP_NAME], config[section][expmgmt.config.settings_default._LOCAL_DIR])
+            for section in config
             if "exp-name" in config[section]
         ]
 
-@click.command("list")
-@click.help_option('--help', '-h')
-@papis.cli.query_option()
-@click.option(
-    "-i",
-    "--info",
-    help="Show the info file name associated with the document",
-    default=False,
-    is_flag=True
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+@click.command(
+    "list"
 )
-@click.option(
-    "-d",
-    "--dir",
-    help="Show the folder name associated with the document",
-    default=False,
-    is_flag=True
+@click.help_option(
+    "-h",
+    "--help" 
 )
 @click.option(
     "-e",
     "--exp",
     help="List defined experiments",
-    default=False,
+    default=True,
     is_flag=True
 )
-
 def cli(
-        dir,
         exp
-        ):
+    ):
     """List documents' properties"""
-
-    if not exp and not dir:
-        dir = True
-
-    experiment = expmgmt.config.experiment.get_exp():
-
-    objects = run(
-        exp = experiment,
-    )
-    # for o in objects:
-    #     click.echo(o)
-    return
+ 
+    for o in run(exp = exp):
+        click.echo(o)

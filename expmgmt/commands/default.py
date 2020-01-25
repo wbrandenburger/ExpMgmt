@@ -1,3 +1,6 @@
+# ===========================================================================
+#   default.py --------------------------------------------------------------
+# ===========================================================================
 """
 
 Examples
@@ -26,23 +29,28 @@ Cli
     :commands: []
 
 """
-
+#   import ------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 import expmgmt.commands
 
+import click
+import colorama
 import difflib
 import logging
 import os
 import sys
 
-import click
-import colorama
-
+#   class -------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 class MultiCommand(click.MultiCommand):
 
+    #   settings ------------------------------------------------------------
+    # -----------------------------------------------------------------------
     scripts = expmgmt.commands.get_scripts()
-    scripts.update(expmgmt.commands.get_external_scripts())
     logger = logging.getLogger('multicommand')
 
+    #   method --------------------------------------------------------------
+    # -----------------------------------------------------------------------
     def list_commands(self, ctx):
         """List all matched commands in the command folder and in path
 
@@ -55,6 +63,8 @@ class MultiCommand(click.MultiCommand):
         rv.sort()
         return rv
 
+    #   method --------------------------------------------------------------
+    # -----------------------------------------------------------------------
     def get_command(self, ctx, name):
         """Get the command to be run
 
@@ -69,32 +79,30 @@ class MultiCommand(click.MultiCommand):
         except KeyError:            
             colorama.init() # general: colorama has to be activated 
             self.logger.error(
-                '{c.Fore.RED}{c.Style.BRIGHT}{c.Back.BLACK}'
-                'Did you mean {0}?'
-                '{c.Style.RESET_ALL}'
+                "{c.Fore.RED}{c.Style.BRIGHT}{c.Back.BLACK}"
+                "Did you mean {0}?"
+                "{c.Style.RESET_ALL}"
                 .format(
-                    ' or '.join(
-                        difflib.get_close_matches(name, self.scripts, n=2)),
+                    " or ".join(
+                        difflib.get_close_matches(name, self.scripts, n=2)
+                    ),
                     c=colorama
-                ))
+                )
+            )
             return None
         if script['plugin']:
             return script['plugin']
-        # # If it gets here, it means that it is an external script
-        # from expmgmt.commands.external import external_cli as cli
-        # from expmgmt.commands.external import get_command_help
-        # cli.context_settings['obj'] = script
-        # cli.help = get_command_help(script['path'])
-        # cli.name = script["command_name"]
-        # cli.short_help = cli.help
-        # return cli
 
-
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 @click.group(
     cls=MultiCommand,
     invoke_without_command=True
 )
-@click.help_option("-h", "--help")
+@click.help_option(
+    "-h",
+    "--help" 
+)
 @click.version_option(version=expmgmt.__version__)
 @click.option(
     "-v",
@@ -119,7 +127,7 @@ def run(
         verbose,
         log,
         color
-        ):
+    ):
 
     if (
         color == "no" or 
@@ -147,9 +155,6 @@ def run(
         level=getattr(logging, log),
         format=log_format
     )
+    
     logger = logging.getLogger('default')
     logger.debug("Plattform '{0}' detected.".format(sys.platform))
-
-    mc = MultiCommand()
-    rv = mc.list_commands(None)
-    print(rv)
