@@ -30,6 +30,7 @@ Cli
 import expmgmt.commands
 import expmgmt.config.configfile
 import expmgmt.config.settings_user as user
+import expmgmt.config.experiment 
 
 import difflib
 import logging
@@ -153,6 +154,14 @@ def run(
     logger.debug("Plattform '{0}' detected.".format(sys.platform))
 
     expmgmt.config.configfile.get_configuration()
-    print(user._attempt)
+    print(expmgmt.config.experiment.get_exp())
+    print(expmgmt.config.experiment.get_exp_dirs())
+    config =expmgmt.config.configfile.get_configuration()
+    hallo = [
+        config[section]['local-dir']
+        for section in config
+        if 'local-dir' in config[section]
+    ]
+    print(hallo)
     # print
     print("HURRA")
