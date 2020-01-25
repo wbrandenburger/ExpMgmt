@@ -103,6 +103,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "expmgmt=expmgmt.commands.default:run",
+            "expmgmt=expmgmt.commands.list:cli"
         ],
     },
     platforms=["linux", "osx", "windows"],
