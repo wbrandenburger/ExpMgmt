@@ -162,6 +162,5 @@ def run(
         for section in config
         if 'local-dir' in config[section]
     ]
-    print(hallo)
-    # print
-    print("HURRA")
+    print(user.get_local_settings())
+    print(user.get_experiment_settings("attempt"))
