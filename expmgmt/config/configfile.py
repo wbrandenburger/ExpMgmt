@@ -17,9 +17,6 @@ import sys
 
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-_LOCAL_CONFIG_FILE = "local-config-file"
-_LOCAL_DIR = "local-dir"
-
 _CONFIGURATION = None  #: Global configuration object variable
 
 logger = logging.getLogger("config")
@@ -177,7 +174,7 @@ def get_configuration():
         logger.debug("Creating configuration")
         _CONFIGURATION = expmgmt.config.configuration.Configuration()
         # Handle local configuration file, and merge it if it exists
-        merge_configuration_from_path(get(_LOCAL_CONFIG_FILE), _CONFIGURATION)
+        merge_configuration_from_path(get(expmgmt.config.settings_default._LOCAL_CONFIG), _CONFIGURATION)
     return _CONFIGURATION
 
 #   function ----------------------------------------------------------------

@@ -14,6 +14,11 @@ from pathlib import Path # @todo[to change]: https://medium.com/@ageitgey/python
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 _GENERAL_SETTINGS_NAME = "settings"
+_LOCAL_DIR = "local-dir"
+_LOCAL_CONFIG = "local-config"
+_DEFAULT_EXP = "default-exp"
+_DEFAULT_EXP_NAME = "experiment"
+
 _OVERRIDE_VARS = {
     "folder": None,
     "file": None,
@@ -223,10 +228,10 @@ def get_default_opener():
 # --------------------------------------------------------------------------- 
 _settings_default = { # default settings
     get_general_settings_name(): {
-        "default-experiment": "experiment"
+        _DEFAULT_EXP: _DEFAULT_EXP_NAME
     },
-    "experiment": { 
-        "local-dir": get_experiments_folder(),
-        "local-config-file": "${local-dir}\experiment.ini"
+    _DEFAULT_EXP_NAME: { 
+        _LOCAL_DIR: get_experiments_folder(),
+        _LOCAL_CONFIG: "${local-dir}\{0}.ini".format(_DEFAULT_EXP_NAME)
     }
 }

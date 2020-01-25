@@ -128,7 +128,7 @@ def get_exp():
 
     if _CURRENT_EXPERIMENT is None:
         # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
-        exp = expmgmt.config.settings_default.get_settings_default(key="default-experiment") # @todo[to change]:
+        exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_EXP) # @todo[to change]:
         set_exp_from_name(exp)
 
     assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.experiment.experiment.Experiment))
