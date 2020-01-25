@@ -232,6 +232,6 @@ _settings_default = { # default settings
     },
     _DEFAULT_EXP_NAME: { 
         _LOCAL_DIR: get_experiments_folder(),
-        _LOCAL_CONFIG: "${local-dir}\{0}.ini".format(_DEFAULT_EXP_NAME)
+        _LOCAL_CONFIG: "${{local-dir}}\{0}.ini".format(_DEFAULT_EXP_NAME)
     }
 }
