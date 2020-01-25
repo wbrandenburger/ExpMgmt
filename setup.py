@@ -106,7 +106,7 @@ setuptools.setup(
 
         ],
         "expmgmt.command": [
-            "list=expmgmt.commands.list:cli"
+            "list=expmgmt.commands.list:cli",
             "run=expmgmt.commands.run:cli"
         ],
     },
