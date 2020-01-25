@@ -35,27 +35,24 @@ Cli
 """
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import os
-import papis.config.utils
-import papis.debug.exceptions
-import logging
-import click
+import expmgmt.config.configfile
 
+import click
+import logging
+import os
+
+#   settings ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 logger = logging.getLogger('run')
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def run(folder, command=[]):
-    logger.debug("Changing directory into %s" % folder)
-    os.chdir(os.path.expanduser(folder))
-    try:
-        commandstr = os.path.expanduser(
-            papis.config.utils.get("".join(command))
-        )
-    except papis.debug.exceptions.DefaultSettingValueMissing:
-        commandstr = " ".join(command)
-    logger.debug("Command = %s" % commandstr)
-    return os.system(commandstr)
+def run(
+    ):
+    
+    logger.debug("List all available experiments defined in configuration folder.".format(folder))
+
+    print(expmgmt.config.configfile.get("main-file")) # @todo[to change]:
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -67,11 +64,8 @@ def run(folder, command=[]):
     "-h",
     "--help" 
 )
-@click.argument(
-    "run_command", 
-    nargs=-1
-)
-def cli(run_command):
+def cli(
+    ):
     """Run an arbitrary shell command in the library folder"""
-    for folder in papis.config.utils.get_lib_dirs():
-        run(folder, command=run_command)
+
+    run()
