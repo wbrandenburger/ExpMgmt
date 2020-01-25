@@ -34,7 +34,8 @@ def set(key, val, section=None):
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def general_get(key, section=None, data_type=None, required=True):
+def general_get(key, section=None, data_type=None, required=False):
+    # @todo[to change]: Changed required to False -> implications for default settings
     """General getter method that will be specialized for different modules.
 
     :param data_type: The data type that should be expected for the value of
@@ -53,7 +54,6 @@ def general_get(key, section=None, data_type=None, required=True):
     config = get_configuration()
     expname = expmgmt.config.experiment.get_exp_name()  
     global_section = expmgmt.config.settings_default.get_general_settings_name() 
-
     specialized_key = section + "-" + key if section is not None else key
     extras = [(section, key)] if section is not None else []
     sections = [(global_section, specialized_key)] +\

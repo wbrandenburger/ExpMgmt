@@ -19,6 +19,7 @@ _LOCAL_DIR = "local-dir"
 _LOCAL_CONFIG = "local-config"
 _DEFAULT_EXP = "default-exp"
 _EXP_NAME = "exp-name"
+_MAIN_EXP_FILE = "main-exp-file"
 
 _DEFAULT_EXP_NAME = "experiment"
 
@@ -225,7 +226,6 @@ def get_default_opener():
         return "start"
     elif os.name == 'posix':
         return "xdg-open"
-
 
 #   settings ----------------------------------------------------------------
 # --------------------------------------------------------------------------- 

@@ -97,7 +97,6 @@ def run(
     config = expmgmt.config.configfile.get_configuration()
 
     if exp:
-        logger.debug("List all available experiments defined in configuration folder.".format(folder))
         return [
             "{0}:\t {1}".format(config[section][expmgmt.config.settings_default._EXP_NAME], config[section][expmgmt.config.settings_default._LOCAL_DIR])
             for section in config
