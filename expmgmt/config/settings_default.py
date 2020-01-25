@@ -14,9 +14,12 @@ from pathlib import Path # @todo[to change]: https://medium.com/@ageitgey/python
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 _GENERAL_SETTINGS_NAME = "settings"
+
 _LOCAL_DIR = "local-dir"
 _LOCAL_CONFIG = "local-config"
 _DEFAULT_EXP = "default-exp"
+_EXP_NAME = "exp-name"
+
 _DEFAULT_EXP_NAME = "experiment"
 
 _OVERRIDE_VARS = {
