@@ -51,6 +51,7 @@ logger = logging.getLogger('run')
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def run(
+        arguments=[]
     ):
     
     path = expmgmt.config.configfile.get(
@@ -63,7 +64,7 @@ def run(
 
     logger.debug("Running main experiment file {0}.".format(path))
     
-    call(["python", path])
+    call(["python", path, ])
     
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -75,8 +76,14 @@ def run(
     "-h",
     "--help" 
 )
+@click.argument(
+    "--arguments", 
+    nargs=-1
+)
+
 def cli(
+        arguments
     ):
     """Run an arbitrary shell command in the library folder"""
 
-    run()
+    run(arguments=arguments)
