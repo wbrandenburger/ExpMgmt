@@ -40,6 +40,16 @@ def get_local_settings(default=True):
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
+def get_experiments_name():
+    exp_settings = get_local_settings(default=False)
+    return [{
+        expmgmt.config.experiment._CURRENT_EXPERIMENT: item["name"]
+        }
+        for item in exp_settings
+    ]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def get_experiment_settings(expname):
     
     exp_settings = get_local_settings(default=False)

@@ -122,9 +122,15 @@ def get_exp():
 
     global _CURRENT_EXPERIMENT
 
-    if os.environ.get("EXPMGMT_EXP"):
-        logger.debug("Environment variable EXPMGMT_EXP found with value '{0}'".format(os.environ.get("EXPMGMT_EXP")))
-        set_exp_from_name(os.environ["EXPMGMT_EXP"]) # @todo[to change]:
+    if os.environ.get(expmgmt.config.settings_default._ENV_EXP):
+        logger.debug("Environment variable '{0}' found with value '{1}'".format(
+            expmgmt.config.settings_default._ENV_EXP,
+            os.environ.get(expmgmt.config.settings_default._ENV_EXP)
+            )
+        )
+        set_exp_from_name(
+            os.environ[expmgmt.config.settings_default._ENV_EXP]
+        ) 
 
     if _CURRENT_EXPERIMENT is None:
         # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!

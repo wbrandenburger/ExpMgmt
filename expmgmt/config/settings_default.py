@@ -15,6 +15,8 @@ from pathlib import Path # @todo[to change]: https://medium.com/@ageitgey/python
 # ---------------------------------------------------------------------------
 _GENERAL_SETTINGS_NAME = "settings"
 
+_ENV_EXP = "EXPMGMT_EXP"
+
 _LOCAL_DIR = "local-dir"
 _LOCAL_CONFIG = "local-config"
 _DEFAULT_EXP = "default-exp"
