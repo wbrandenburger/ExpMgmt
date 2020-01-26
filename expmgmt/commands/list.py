@@ -123,13 +123,14 @@ def run(
 @click.option(
     "--projects",
     help="Show all available projects and their main directory (default).",
-    default=False,
-    is_flag=True
+    is_flag=True,
+    default=False
 )
 @click.option(
     "-p",
     "--project",
     help="Show the experiment names of a specified project",
+    type=str,
     default=lambda: exp.config.configfile.get(expmgmt.config.settings_default._DEFAULT_EXP) if not os.environ.get(expmgmt.config.settings_default._ENV_EXP) else os.environ.get(expmgmt.config.settings_default._ENV_EXP) 
 
 )
@@ -137,6 +138,7 @@ def run(
     "-e",
     "--experiment",
     help="Show the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_EXP),
+    type=str,
     default=None
 )
 def cli(

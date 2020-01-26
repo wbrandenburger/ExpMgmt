@@ -41,7 +41,9 @@ import expmgmt.config.settings_default
 import click
 import logging
 import os
-from subprocess import call
+import shlex
+import subprocess
+import sys
 
 
 #   settings ----------------------------------------------------------------
@@ -62,9 +64,12 @@ def run(
         logger.warning("Running main experiment file: File {0} does not exist.".format(path))
         return
 
-    logger.debug("Running main experiment file {0}.".format(path))
+    cmd = " ".join(["python", path, " ".join(arguments)])
     
-    call(["python", path, ])
+    logger.debug("Running main experiment file {0}.".format(path))
+    logger.debug("Call '{0}'".format(cmd))
+    
+    subprocess.call(cmd)
     
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -77,10 +82,9 @@ def run(
     "--help" 
 )
 @click.argument(
-    "--arguments", 
+    "arguments", 
     nargs=-1
 )
-
 def cli(
         arguments
     ):
