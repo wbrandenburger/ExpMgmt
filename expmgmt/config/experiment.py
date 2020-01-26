@@ -81,7 +81,7 @@ def get_exp_from_name(expname):
             paths = [os.path.expanduser(config[name][ expmgmt.config.settings_default._LOCAL_DIR])]
         except KeyError:
             try:
-                paths = eval(os.path.expanduser(config[name].get("dirs")))  # @todo[to change]:
+                paths = eval(os.path.expanduser(config[name].get("local-dir")))  # @todo[to change]:
             except SyntaxError as e:
                 raise Exception(
                     "To define a experiment you have to set either dir or dirs"
@@ -104,7 +104,7 @@ def get_exp_dirs():
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_PROJ_NAME():
+def get_proj_name():
 
     return get_exp().name
 
@@ -121,20 +121,20 @@ def get_exp():
     """
 
     global _CURRENT_EXPERIMENT
-
-    if os.environ.get(expmgmt.config.settings_default._ENV_EXP):
-        logger.debug("Environment variable '{0}' found with value '{1}'".format(
-            expmgmt.config.settings_default._ENV_EXP,
-            os.environ.get(expmgmt.config.settings_default._ENV_EXP)
-            )
-        )
-        set_exp_from_name(
-            os.environ[expmgmt.config.settings_default._ENV_EXP]
-        ) 
     if _CURRENT_EXPERIMENT is None:
-        # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
-        exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_PROJ)
-        set_exp_from_name(exp)
+        if os.environ.get(expmgmt.config.settings_default._ENV_EXP):
+            logger.debug("Environment variable '{0}' found with value '{1}'".format(
+                expmgmt.config.settings_default._ENV_EXP,
+                os.environ.get(expmgmt.config.settings_default._ENV_EXP)
+                )
+            )
+            set_exp_from_name(
+                os.environ[expmgmt.config.settings_default._ENV_EXP]
+            ) 
+        if _CURRENT_EXPERIMENT is None:
+            # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
+            exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_PROJ)
+            set_exp_from_name(exp)
 
     assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.utils.experiment.Experiment))
     return _CURRENT_EXPERIMENT

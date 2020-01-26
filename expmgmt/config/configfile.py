@@ -52,7 +52,7 @@ def general_get(key, section=None, data_type=None, required=False):
     value = None
 
     config = get_configuration()
-    expname = expmgmt.config.experiment.get_PROJ_NAME()  
+    expname = expmgmt.config.experiment.get_proj_name()  
     global_section = expmgmt.config.settings_default.get_general_settings_name() 
     specialized_key = section + "-" + key if section is not None else key
     extras = [(section, key)] if section is not None else []

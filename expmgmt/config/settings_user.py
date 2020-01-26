@@ -36,6 +36,16 @@ def get_local_settings(default=True):
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
+def get_projects_name():
+    
+    config = expmgmt.config.configfile.get_configuration()
+
+    return [
+        config[section][expmgmt.config.settings_default._PROJ_NAME] for section in config if expmgmt.config.settings_default._PROJ_NAME in config[section]
+    ]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def get_experiments_name():
     exp_settings = get_local_settings(default=False)
     return [

@@ -32,6 +32,9 @@ Cli
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.commands
+import expmgmt.config.settings_default
+import expmgmt.config.settings_user
+import expmgmt.config.experiment
 
 import click
 import colorama
@@ -105,6 +108,13 @@ class MultiCommand(click.MultiCommand):
 )
 @click.version_option(version=expmgmt.__version__)
 @click.option(
+    "-p",
+    "--project",
+    help="Set the current project.",
+    type=click.Choice([*expmgmt.config.settings_user.get_projects_name()]),
+    default=lambda: expmgmt.config.settings_default._DEFAULT_EXP_NAME if not os.environ.get(expmgmt.config.settings_default._ENV_EXP) else os.environ.get(expmgmt.config.settings_default._ENV_EXP)
+)
+@click.option(
     "-v",
     "--verbose",
     help="Make the output verbose (equivalent to --log DEBUG)",
@@ -124,6 +134,7 @@ class MultiCommand(click.MultiCommand):
     help="Prevent the output from having color"
 )
 def run(
+        project,
         verbose,
         log,
         color
@@ -158,3 +169,7 @@ def run(
     
     logger = logging.getLogger('default')
     logger.debug("Plattform '{0}' detected.".format(sys.platform))
+
+    # set the specified project
+    if project:
+        expmgmt.config.experiment.set_exp_from_name(project)

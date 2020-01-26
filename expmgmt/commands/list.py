@@ -95,16 +95,9 @@ def run(
     :return:: List different objects
     :rtype:  list
     """
-
-    config = expmgmt.config.configfile.get_configuration()
-
+    
     if projects:
-        return [{
-            config[section][expmgmt.config.settings_default._PROJ_NAME]: config[section][expmgmt.config.settings_default._LOCAL_DIR]
-            }
-            for section in config
-            if expmgmt.config.settings_default._PROJ_NAME in config[section]
-        ]
+        return expmgmt.config.settings_user.get_projects_name()
     elif experiments:
         return expmgmt.config.settings_user.get_experiments_name()
     else:
