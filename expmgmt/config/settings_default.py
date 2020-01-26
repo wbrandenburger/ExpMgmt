@@ -242,6 +242,6 @@ _settings_default = { # default settings
     _DEFAULT_PROJ_NAME: {
         _PROJ_NAME : _DEFAULT_PROJ_NAME,
         _LOCAL_DIR: get_experiments_folder(),
-        _LOCAL_CONFIG: "${{{0}}}\${{{1}}}.ini".format(_LOCAL_DIR, _PROJ_NAME)
+        _LOCAL_CONFIG: "${{{0}}}\${{{1}}}.ini".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME)
     }
 }
