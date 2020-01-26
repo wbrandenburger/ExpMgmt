@@ -72,7 +72,6 @@ Cli
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.config.configfile
-import expmgmt.config.experiment
 import expmgmt.config.settings_default
 import expmgmt.config.settings_user
 
@@ -104,7 +103,7 @@ def run(
             config[section][expmgmt.config.settings_default._PROJ_NAME]: config[section][expmgmt.config.settings_default._LOCAL_DIR]
             }
             for section in config
-            if "exp-name" in config[section]
+            if expmgmt.config.settings_default._PROJ_NAME in config[section]
         ]
     elif experiments:
         return expmgmt.config.settings_user.get_experiments_name()

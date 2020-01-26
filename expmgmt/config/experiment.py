@@ -131,12 +131,10 @@ def get_exp():
         set_exp_from_name(
             os.environ[expmgmt.config.settings_default._ENV_EXP]
         ) 
-
     if _CURRENT_EXPERIMENT is None:
         # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
         exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_PROJ)
         set_exp_from_name(exp)
 
     assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.utils.experiment.Experiment))
-    
     return _CURRENT_EXPERIMENT
