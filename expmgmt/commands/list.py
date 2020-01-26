@@ -122,21 +122,21 @@ def run(
 )
 @click.option(
     "--projects",
-    help="Choose a experiment name",
+    help="Show all available projects and their main directory (default).",
     default=False,
     is_flag=True
 )
 @click.option(
     "-p",
     "--project",
-    help="Choose a project name",
+    help="Show the experiment names of a specified project",
     default=lambda: exp.config.configfile.get(expmgmt.config.settings_default._DEFAULT_EXP) if not os.environ.get(expmgmt.config.settings_default._ENV_EXP) else os.environ.get(expmgmt.config.settings_default._ENV_EXP) 
 
 )
 @click.option(
     "-e",
     "--experiment",
-    help="Choose a experiment name of the current experiment",
+    help="Show the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_EXP),
     default=None
 )
 def cli(
