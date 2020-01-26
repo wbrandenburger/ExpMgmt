@@ -20,3 +20,26 @@ class DefaultSettingValueMissing(Exception):
     Don't forget to check the documentation.
         """.format(key)
         super(DefaultSettingValueMissing, self).__init__(message)
+
+#   class -------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+class DefaultExperimentMissing(Exception):
+    """This exception is when a experiment has no name.
+    """
+
+    def __init__(self, name):
+        message = """
+
+    No experiment defined in the local settings file has
+    the specified name '{0}'. Try setting its value in 
+    your settings file as such:
+    
+    [
+        {{
+            name : {0}
+        }}
+    ]
+
+    Don't forget to check the documentation.
+        """.format(name)
+        super(DefaultExperimentMissing, self).__init__(message)

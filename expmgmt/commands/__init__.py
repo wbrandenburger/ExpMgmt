@@ -4,7 +4,7 @@
 
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import expmgmt.config.configuration
+import expmgmt.utils.configuration
 import expmgmt.plugin
 
 import glob

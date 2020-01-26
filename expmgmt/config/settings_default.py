@@ -17,13 +17,17 @@ _GENERAL_SETTINGS_NAME = "settings"
 
 _ENV_EXP = "EXPMGMT_EXP"
 
+_DEFAULT_PROJ = "default-proj"
+_PROJ_NAME = "proj-name"
 _LOCAL_DIR = "local-dir"
 _LOCAL_CONFIG = "local-config"
-_DEFAULT_EXP = "default-exp"
-_EXP_NAME = "exp-name"
-_MAIN_EXP_FILE = "main-exp-file"
+_LOCAL_SETTINGS_EXP = "local-settings-experiments"
+_LOCAL_SETTINGS_DEFAULT = "local-settings-default"
 
-_DEFAULT_EXP_NAME = "experiment"
+_MAIN_PROJ_FILE = "main-proj-file"
+
+_DEFAULT_PROJ_NAME = "project"
+_DEFAULT_EXP_NAME = "default"
 
 _OVERRIDE_VARS = {
     "folder": None,
@@ -233,11 +237,11 @@ def get_default_opener():
 # --------------------------------------------------------------------------- 
 _settings_default = { # default settings
     get_general_settings_name(): {
-        _DEFAULT_EXP: _DEFAULT_EXP_NAME
+        _DEFAULT_PROJ: _DEFAULT_PROJ_NAME
     },
-    _DEFAULT_EXP_NAME: {
-        _EXP_NAME : _DEFAULT_EXP_NAME,
+    _DEFAULT_PROJ_NAME: {
+        _PROJ_NAME : _DEFAULT_PROJ_NAME,
         _LOCAL_DIR: get_experiments_folder(),
-        _LOCAL_CONFIG: "${{{0}}}\${{{1}}}.ini".format(_LOCAL_DIR, _EXP_NAME)
+        _LOCAL_CONFIG: "${{{0}}}\${{{1}}}.ini".format(_LOCAL_DIR, _PROJ_NAME)
     }
 }

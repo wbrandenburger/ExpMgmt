@@ -4,7 +4,7 @@
 
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import expmgmt.config.configuration
+import expmgmt.utils.configuration
 import expmgmt.config.settings_default
 import expmgmt.debug.exceptions
 import expmgmt.config.experiment
@@ -52,7 +52,7 @@ def general_get(key, section=None, data_type=None, required=False):
     value = None
 
     config = get_configuration()
-    expname = expmgmt.config.experiment.get_exp_name()  
+    expname = expmgmt.config.experiment.get_PROJ_NAME()  
     global_section = expmgmt.config.settings_default.get_general_settings_name() 
     specialized_key = section + "-" + key if section is not None else key
     extras = [(section, key)] if section is not None else []
@@ -182,12 +182,12 @@ def get_configuration():
     ever be configured.
 
     :return:: Configuration object
-    :rtype:  expmgmt.config.configuration.Configuration
+    :rtype:  expmgmt.utils.configuration.Configuration
     """
     global _CONFIGURATION
     if _CONFIGURATION is None:
         logger.debug("Creating configuration")
-        _CONFIGURATION = expmgmt.config.configuration.Configuration()
+        _CONFIGURATION = expmgmt.utils.configuration.Configuration()
         # Handle local configuration file, and merge it if it exists
         merge_configuration_from_path(get(expmgmt.config.settings_default._LOCAL_CONFIG), _CONFIGURATION)
     return _CONFIGURATION
@@ -202,7 +202,7 @@ def merge_configuration_from_path(path, configuration):
     :param path: Path to the configuration file
     :type  path: str
     :param configuration: Configuration object
-    :type  configuration: expmgmt.config.configuration.Configuration
+    :type  configuration: expmgmt.utils.configuration.Configuration
     """
     if not os.path.exists(path):
         logger.warning("Merging configuration: File {0} does not exist.".format(path))
@@ -217,7 +217,7 @@ def reset_configuration():
     """Destroys existing configuration and return: a new one.
 
     :return:: Configuration object
-    :rtype:  expmgmt.config.configuration.Configuration
+    :rtype:  expmgmt.utils.configuration.Configuration
     """
     global _CONFIGURATION
     if _CONFIGURATION is not None:

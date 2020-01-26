@@ -29,7 +29,8 @@ def data_to_yaml(path, data):
             data,
             f,
             #allow_unicode=True/False),
-            default_flow_style=False
+            default_flow_style=False,
+            sort_keys=False
         )
 
 #   function ----------------------------------------------------------------

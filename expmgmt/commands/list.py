@@ -88,7 +88,7 @@ logger = logging.getLogger('list')
 # ---------------------------------------------------------------------------
 def run(
         projects,
-        project,
+        experiments,
         experiment
     ):
     """Main method to the list command
@@ -101,16 +101,16 @@ def run(
 
     if projects:
         return [{
-            config[section][expmgmt.config.settings_default._EXP_NAME]: config[section][expmgmt.config.settings_default._LOCAL_DIR]
+            config[section][expmgmt.config.settings_default._PROJ_NAME]: config[section][expmgmt.config.settings_default._LOCAL_DIR]
             }
             for section in config
             if "exp-name" in config[section]
         ]
-    elif experiment:
-        return expmgmt.config.settings_user.get_experiment_settings(experiment=experiment)
-    else:
+    elif experiments:
         return expmgmt.config.settings_user.get_experiments_name()
-        
+    else:
+        return expmgmt.config.settings_user.get_experiment_settings(experiment=experiment)
+
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 @click.command(
@@ -127,34 +127,35 @@ def run(
     default=False
 )
 @click.option(
-    "-p",
-    "--project",
-    help="Show the experiment names of a specified project",
-    type=str,
-    default=lambda: exp.config.configfile.get(expmgmt.config.settings_default._DEFAULT_EXP) if not os.environ.get(expmgmt.config.settings_default._ENV_EXP) else os.environ.get(expmgmt.config.settings_default._ENV_EXP) 
-
+    "--experiments",
+    help="Show the experiment names of current project",
+    is_flag=True,
+    default=False
 )
 @click.option(
     "-e",
     "--experiment",
     help="Show the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_EXP),
-    type=str,
-    default=None
+    type=click.Choice([expmgmt.config.settings_default._DEFAULT_EXP_NAME, *expmgmt.config.settings_user.get_experiments_name()]),
+    default=expmgmt.config.settings_default._DEFAULT_EXP_NAME
 )
 def cli(
         projects,
-        project,
+        experiments,
         experiment
     ):
     """List experiments' properties"""
  
     result = run(
         projects=projects,
-        project=project,
+        experiments=experiments,
         experiment = experiment
     )
 
     result = [result] if not isinstance(result,list) else result
     for list_item in result:
-        for item, value in list_item.items():
-            print(item, value)
+        if isinstance(list_item, dict):
+            for item, value in list_item.items():
+                print(item, value)
+        else:
+            print(list_item)

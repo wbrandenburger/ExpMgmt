@@ -83,11 +83,11 @@ def pass_settings(
 # ---------------------------------------------------------------------------
 def run(
         arguments=[],
-        experiment="default"
+        experiment=expmgmt.config.settings_default._DEFAULT_EXP_NAME
     ):
     
     path = expmgmt.config.configfile.get(
-        expmgmt.config.settings_default._MAIN_EXP_FILE, required=False
+        expmgmt.config.settings_default._MAIN_PROJ_FILE, required=False
     )
 
     if not os.path.exists(path):
@@ -129,8 +129,8 @@ def run(
     "-e",
     "--experiment",
     help="Pass the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_EXP),
-    type=str,
-    default=None
+    type=click.Choice([expmgmt.config.settings_default._DEFAULT_EXP_NAME, *expmgmt.config.settings_user.get_experiments_name()]),
+    default=expmgmt.config.settings_default._DEFAULT_EXP_NAME
 )
 def cli(
         arguments,

@@ -6,7 +6,7 @@
 # ---------------------------------------------------------------------------
 import expmgmt.config.configfile
 import expmgmt.config.settings_default
-import expmgmt.experiment.experiment
+import expmgmt.utils.experiment
 
 import os
 import logging
@@ -29,7 +29,7 @@ def set_exp(experiment):
 
     global _CURRENT_EXPERIMENT
 
-    assert(isinstance(experiment, expmgmt.experiment.experiment.Experiment))
+    assert(isinstance(experiment, expmgmt.utils.experiment.Experiment))
 
     config = expmgmt.config.configfile.get_configuration()
     if experiment.name not in config.keys():
@@ -66,7 +66,7 @@ def get_exp_from_name(expname):
                     expname
                 )
             )
-            experiment_obj = expmgmt.experiment.experiment.from_paths([expname])
+            experiment_obj = expmgmt.utils.experiment.from_paths([expname])
             name = experiment_obj.path_format()
             config[name] = dict(dirs=experiment_obj.paths)
         else:
@@ -88,7 +88,7 @@ def get_exp_from_name(expname):
                     " in the configuration file.\n"
                     "Error: ({0})".format(e)
                 )
-        experiment_obj = expmgmt.experiment.experiment.Experiment(expname, paths)
+        experiment_obj = expmgmt.utils.experiment.Experiment(expname, paths)
     return experiment_obj
 
 #   function ----------------------------------------------------------------
@@ -104,7 +104,7 @@ def get_exp_dirs():
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_exp_name():
+def get_PROJ_NAME():
 
     return get_exp().name
 
@@ -134,9 +134,9 @@ def get_exp():
 
     if _CURRENT_EXPERIMENT is None:
         # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
-        exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_EXP)
+        exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_PROJ)
         set_exp_from_name(exp)
 
-    assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.experiment.experiment.Experiment))
+    assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.utils.experiment.Experiment))
     
     return _CURRENT_EXPERIMENT

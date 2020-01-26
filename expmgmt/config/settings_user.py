@@ -7,6 +7,7 @@
 # ---------------------------------------------------------------------------
 import expmgmt.config.configfile
 import expmgmt.config.experiment
+import expmgmt.config.settings_default
 import expmgmt.utils.yaml
 
 import logging
@@ -15,9 +16,6 @@ import yaml
 
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-_LOCAL_SETTINGS = "local-settings"
-_LOCAL_SETTINGS_DEFAULT = "local-settings-default"
-
 # @todo[to change]: logging
 
 #   function ----------------------------------------------------------------
@@ -25,11 +23,11 @@ _LOCAL_SETTINGS_DEFAULT = "local-settings-default"
 def get_local_settings(default=True):
 
     if default:
-        settings_file = expmgmt.config.configfile.get(_LOCAL_SETTINGS_DEFAULT)
+        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings_default._LOCAL_SETTINGS_DEFAULT)
         if not os.path.isfile(settings_file):
             raise SyntaxError("Settings file {0} with default values does not exist".format(settings_file))
     else:
-        settings_file = expmgmt.config.configfile.get(_LOCAL_SETTINGS)
+        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings_default._LOCAL_SETTINGS_EXP)
         if not os.path.isfile(settings_file):
             return None
     # @todo[to change]: add logger
@@ -40,35 +38,32 @@ def get_local_settings(default=True):
 # ---------------------------------------------------------------------------
 def get_experiments_name():
     exp_settings = get_local_settings(default=False)
-    return [{
-        expmgmt.config.experiment._CURRENT_EXPERIMENT: item["name"]
-        }
+    return [
+         item["name"]
         for item in exp_settings
     ]
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_experiment_settings(
-        experiment="default"
+        experiment=expmgmt.config.settings_default._DEFAULT_EXP_NAME
     ):
     
-    exp_settings = get_local_settings(default=False)
-
-    exp_item = None
-    if exp_settings is not None:
-        for item in exp_settings:
-            if item["name"] == experiment:
-                exp_item = item
-                break
-
     default_settings = get_local_settings()
-    optional_default_settings = expmgmt.config.configfile.get_section("default")
+    optional_default_settings = expmgmt.config.configfile.get_section(expmgmt.config.settings_default._DEFAULT_EXP_NAME)
     
     if optional_default_settings is not dict():
         default_settings.update(optional_default_settings)
 
-    if exp_item is not None:
-        # raise expmgmt.debug.exceptions.DefaultSettingValueMissing(experiment) # @todo[to change]: exception is actually used for ini and not json's
-        default_settings.update(exp_item)
-
+    experiment_object = None
+    if experiment in get_experiments_name():
+        experiment_settings = get_local_settings(default=False)
+        if experiment_settings is not None:
+            for item in experiment_settings:
+                if item["name"] == experiment:
+                    default_settings.update(item)
+                    return default_settings
+    elif experiment != expmgmt.config.settings_default._DEFAULT_EXP_NAME:
+        raise expmgmt.debug.exceptions.DefaultExperimentMissing(experiment)
+    
     return default_settings
