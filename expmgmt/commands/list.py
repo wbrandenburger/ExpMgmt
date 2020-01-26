@@ -89,7 +89,7 @@ logger = logging.getLogger('list')
 def run(
         projects,
         project,
-        exp_name
+        experiment
     ):
     """Main method to the list command
 
@@ -106,8 +106,8 @@ def run(
             for section in config
             if "exp-name" in config[section]
         ]
-    elif exp_name:
-        return expmgmt.config.settings_user.get_experiment_settings(exp_name)
+    elif experiment:
+        return expmgmt.config.settings_user.get_experiment_settings(experiment=experiment)
     else:
         return expmgmt.config.settings_user.get_experiments_name()
         
@@ -151,7 +151,7 @@ def cli(
     result = run(
         projects=projects,
         project=project,
-        exp_name = experiment
+        experiment = experiment
     )
 
     result = [result] if not isinstance(result,list) else result

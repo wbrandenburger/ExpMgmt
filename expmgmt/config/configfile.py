@@ -102,6 +102,21 @@ def get(*args, **kwargs):
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
+def get_section(section, required=False):
+    """Section getter
+    """
+    data = dict()
+    config = get_configuration()
+
+    if section in config.keys():
+        return config[section]
+    else:
+        if required:
+            raise expmgmt.debug.exceptions.DefaultSettingValueMissing(section) # @todo[to change]: missing section
+    return data
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def getint(*args, **kwargs):
     """Integer getter
 

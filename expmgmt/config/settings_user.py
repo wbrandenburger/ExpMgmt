@@ -7,6 +7,7 @@
 # ---------------------------------------------------------------------------
 import expmgmt.config.configfile
 import expmgmt.config.experiment
+import expmgmt.utils.yaml
 
 import logging
 import os
@@ -30,13 +31,10 @@ def get_local_settings(default=True):
     else:
         settings_file = expmgmt.config.configfile.get(_LOCAL_SETTINGS)
         if not os.path.isfile(settings_file):
-            # raise SyntaxWarning("Settings file {0} does not exist".format(settings_file))
             return None
-    
-    with open(settings_file) as f:
-            object_list = yaml.load(f, Loader=yaml.FullLoader)
-
-    return object_list
+    # @todo[to change]: add logger
+    data = expmgmt.utils.yaml.yaml_to_data(settings_file, raise_exception=True)
+    return data
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -50,21 +48,27 @@ def get_experiments_name():
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_experiment_settings(expname):
+def get_experiment_settings(
+        experiment="default"
+    ):
     
     exp_settings = get_local_settings(default=False)
 
     exp_item = None
     if exp_settings is not None:
         for item in exp_settings:
-            if item["name"] == expname:
+            if item["name"] == experiment:
                 exp_item = item
                 break
 
     default_settings = get_local_settings()
+    optional_default_settings = expmgmt.config.configfile.get_section("default")
+    
+    if optional_default_settings is not dict():
+        default_settings.update(optional_default_settings)
 
     if exp_item is not None:
-        # raise expmgmt.debug.exceptions.DefaultSettingValueMissing(expname) # @todo[to change]: exception is actually used for ini and not json's
+        # raise expmgmt.debug.exceptions.DefaultSettingValueMissing(experiment) # @todo[to change]: exception is actually used for ini and not json's
         default_settings.update(exp_item)
 
     return default_settings
