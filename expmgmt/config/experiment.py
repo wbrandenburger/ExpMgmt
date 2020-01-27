@@ -113,7 +113,7 @@ def get_proj_name():
 def get_exp():
     """Get current experiment, if there is no experiment set before,
     the default experiment will be retrieved.
-    If the `EXPMGMT_EXP` environment variable is defined, this is the
+    If the `EXPMGMT_PROJECT` environment variable is defined, this is the
     experiment name (or path) that will be taken as a default.
 
     :return:: Current experiment
@@ -122,14 +122,14 @@ def get_exp():
 
     global _CURRENT_EXPERIMENT
     if _CURRENT_EXPERIMENT is None:
-        if os.environ.get(expmgmt.config.settings_default._ENV_EXP):
+        if os.environ.get(expmgmt.config.settings_default._ENV_PROJECT):
             logger.debug("Environment variable '{0}' found with value '{1}'".format(
-                expmgmt.config.settings_default._ENV_EXP,
-                os.environ.get(expmgmt.config.settings_default._ENV_EXP)
+                expmgmt.config.settings_default._ENV_PROJECT,
+                os.environ.get(expmgmt.config.settings_default._ENV_PROJECT)
                 )
             )
             set_exp_from_name(
-                os.environ[expmgmt.config.settings_default._ENV_EXP]
+                os.environ[expmgmt.config.settings_default._ENV_PROJECT]
             ) 
         if _CURRENT_EXPERIMENT is None:
             # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!

@@ -128,7 +128,7 @@ def run(
 @click.option(
     "-e",
     "--experiment",
-    help="Pass the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_EXP),
+    help="Pass the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_PROJECT),
     type=click.Choice([expmgmt.config.settings_default._DEFAULT_EXP_NAME, *expmgmt.config.settings_user.get_experiments_name()]),
     default=expmgmt.config.settings_default._DEFAULT_EXP_NAME
 )

@@ -16,7 +16,7 @@ import yaml
 
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-# @todo[to change]: logging
+logger = logging.getLogger("config")
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -25,11 +25,15 @@ def get_local_settings(default=True):
     if default:
         settings_file = expmgmt.config.configfile.get(expmgmt.config.settings_default._LOCAL_SETTINGS_DEFAULT)
         if not os.path.isfile(settings_file):
-            raise SyntaxError("Settings file {0} with default values does not exist".format(settings_file))
+            logger.debug("Settings file {0} with default experiment does not exist".format(settings_file))
+            return expmgmt.config.settings_default._settings_default_experiment
+
     else:
         settings_file = expmgmt.config.configfile.get(expmgmt.config.settings_default._LOCAL_SETTINGS_EXP)
         if not os.path.isfile(settings_file):
-            return None
+            logger.debug("Settings file {0} with experiment settings does not exist".format(settings_file))
+            return
+
     # @todo[to change]: add logger
     data = expmgmt.utils.yaml.yaml_to_data(settings_file, raise_exception=True)
     return data
@@ -48,10 +52,11 @@ def get_projects_name():
 # ---------------------------------------------------------------------------
 def get_experiments_name():
     exp_settings = get_local_settings(default=False)
-    return [
-         item["name"]
-        for item in exp_settings
-    ]
+    
+    if exp_settings is None:
+        return [expmgmt.config.settings_default._DEFAULT_EXP_NAME]
+    else:
+        return [item["name"] for item in exp_settings]
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------

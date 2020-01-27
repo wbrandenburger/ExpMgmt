@@ -15,7 +15,7 @@ from pathlib import Path # @todo[to change]: https://medium.com/@ageitgey/python
 # ---------------------------------------------------------------------------
 _GENERAL_SETTINGS_NAME = "settings"
 
-_ENV_EXP = "EXPMGMT_EXP"
+_ENV_PROJECT = "EXPMGMT_PROJECT"
 
 _DEFAULT_PROJ = "default-proj"
 _PROJ_NAME = "proj-name"
@@ -28,6 +28,9 @@ _MAIN_PROJ_FILE = "main-proj-file"
 
 _DEFAULT_PROJ_NAME = "project"
 _DEFAULT_EXP_NAME = "default"
+
+_PROJECT_DIR = "projects"
+_SCRIPT_DIR = "scripts"
 
 _OVERRIDE_VARS = {
     "folder": None,
@@ -155,18 +158,18 @@ def get_scripts_folder():
     """
 
     return os.path.join(
-        get_config_folder(), "scripts"
+        get_config_folder(), _SCRIPT_DIR, 
     )
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_experiments_folder():
-    """Get folder where the experiments are stored,
-    e.g. /home/user/.config/expmgmt/experiments
+def get_projects_folder():
+    """Get folder where the projects are stored,
+    e.g. /home/user/.config/expmgmt/projects
     """
 
     return os.path.join(
-        get_config_folder(), "experiments"
+        get_config_folder(), _PROJECT_DIR, _DEFAULT_PROJ_NAME
     )
 
 #   function ----------------------------------------------------------------
@@ -241,7 +244,13 @@ _settings_default = { # default settings
     },
     _DEFAULT_PROJ_NAME: {
         _PROJ_NAME : _DEFAULT_PROJ_NAME,
-        _LOCAL_DIR: get_experiments_folder(),
-        _LOCAL_CONFIG: "${{{0}}}\${{{1}}}.ini".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME)
+        _LOCAL_DIR: get_projects_folder(),
+        _LOCAL_CONFIG: "${{{0}}}\{1}.ini".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
+        _LOCAL_SETTINGS_DEFAULT : "${{{0}}}\{1}-default.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
+        _LOCAL_SETTINGS_EXP : "${{{0}}}\{1}-experiments.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME)
     }
+}
+
+_settings_default_experiment = {
+    "name": _DEFAULT_EXP_NAME
 }

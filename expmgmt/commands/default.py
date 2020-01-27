@@ -112,7 +112,7 @@ class MultiCommand(click.MultiCommand):
     "--project",
     help="Set the current project.",
     type=click.Choice([*expmgmt.config.settings_user.get_projects_name()]),
-    default=lambda: expmgmt.config.settings_default._DEFAULT_EXP_NAME if not os.environ.get(expmgmt.config.settings_default._ENV_EXP) else os.environ.get(expmgmt.config.settings_default._ENV_EXP)
+    default=lambda: expmgmt.config.settings_default._DEFAULT_EXP_NAME if not os.environ.get(expmgmt.config.settings_default._ENV_PROJECT) else os.environ.get(expmgmt.config.settings_default._ENV_PROJECT)
 )
 @click.option(
     "-v",

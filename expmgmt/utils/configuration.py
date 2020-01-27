@@ -32,7 +32,7 @@ class Configuration(ConfigParser):
         self.scripts_location = expmgmt.config.settings_default.get_scripts_folder()
 
         # get folder where the experiments are stored
-        self.experiments_location = expmgmt.config.settings_default.get_experiments_folder()
+        self.experiments_location = expmgmt.config.settings_default.get_projects_folder()
 
         self.initialize()
 
