@@ -74,6 +74,7 @@ Cli
 import expmgmt.config.configfile
 import expmgmt.config.settings
 import expmgmt.config.settings
+import expmgmt.utils.format
 
 import click
 import logging
@@ -144,10 +145,4 @@ def cli(
         experiment = experiment
     )
 
-    result = [result] if not isinstance(result,list) else result
-    for list_item in result:
-        if isinstance(list_item, dict):
-            for item, value in list_item.items():
-                print(item, value)
-        else:
-            print(list_item)
+    expmgmt.utils.format.print_data(result)
