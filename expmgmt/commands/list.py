@@ -72,8 +72,8 @@ Cli
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.config.configfile
-import expmgmt.config.settings_default
-import expmgmt.config.settings_user
+import expmgmt.config.settings
+import expmgmt.config.settings
 
 import click
 import logging
@@ -97,11 +97,11 @@ def run(
     """
     
     if projects:
-        return expmgmt.config.settings_user.get_projects_name()
+        return expmgmt.config.settings.get_projects_name()
     elif experiments:
-        return expmgmt.config.settings_user.get_experiments_name()
+        return expmgmt.config.settings.get_experiments_name()
     else:
-        return expmgmt.config.settings_user.get_experiment_settings(experiment=experiment)
+        return expmgmt.config.settings.get_experiment_settings(experiment=experiment)
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -127,9 +127,9 @@ def run(
 @click.option(
     "-e",
     "--experiment",
-    help="Show the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_PROJECT),
-    type=click.Choice([expmgmt.config.settings_default._DEFAULT_EXP_NAME, *expmgmt.config.settings_user.get_experiments_name()]),
-    default=expmgmt.config.settings_default._DEFAULT_EXP_NAME
+    help="Show the settings of the current experiment defined in {0}".format(expmgmt.config.settings._ENV_PROJECT),
+    type=click.Choice([expmgmt.config.settings._DEFAULT_EXP_NAME, *expmgmt.config.settings.get_experiments_name()]),
+    default=expmgmt.config.settings._DEFAULT_EXP_NAME
 )
 def cli(
         projects,

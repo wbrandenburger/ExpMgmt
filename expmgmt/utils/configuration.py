@@ -4,7 +4,7 @@
 
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import expmgmt.config.settings_default
+import expmgmt.config.settings
 
 from configparser import ConfigParser, ExtendedInterpolation
 import logging
@@ -25,14 +25,14 @@ class Configuration(ConfigParser):
         self.logger = logging.getLogger("config")
 
         # get folder where the configuration files are stored and the path of the main configuration file
-        self.dir_location = expmgmt.config.settings_default.get_config_folder()
-        self.file_location = expmgmt.config.settings_default.get_config_file()
+        self.dir_location = expmgmt.config.settings.get_config_folder()
+        self.file_location = expmgmt.config.settings.get_config_file()
 
         # get folder where the scripts are stored
-        self.scripts_location = expmgmt.config.settings_default.get_scripts_folder()
+        self.scripts_location = expmgmt.config.settings.get_scripts_folder()
 
         # get folder where the experiments are stored
-        self.experiments_location = expmgmt.config.settings_default.get_projects_folder()
+        self.experiments_location = expmgmt.config.settings.get_projects_folder()
 
         self.initialize()
 
@@ -95,7 +95,7 @@ class Configuration(ConfigParser):
             self.handle_includes()
         else:
             # create configuration file, e.g. /home/user/.config/config.ini with default settings 
-            default_info = expmgmt.config.settings_default.get_settings_default()
+            default_info = expmgmt.config.settings.get_settings_default()
             for section in default_info:
                 self[section] = {}
                 for field in default_info[section]:
@@ -104,7 +104,7 @@ class Configuration(ConfigParser):
                 self.write(configfile)
 
         #   execute additional script files ---------------------------------
-        configpy = expmgmt.config.settings_default.get_configpy_file()
+        configpy = expmgmt.config.settings.get_configpy_file()
         if os.path.exists(configpy):
             self.logger.debug('Executing {0}'.format(configpy))
             with open(configpy) as fd:

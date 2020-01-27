@@ -4,10 +4,15 @@
 
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
+import expmgmt.config.configfile
+import expmgmt.config.experiment
+import expmgmt.utils.yaml
+
 from collections import OrderedDict
 import logging
 import os
 import sys
+import yaml
 
 from pathlib import Path # @todo[to change]: https://medium.com/@ageitgey/python-3-quick-tip-the-easy-way-to-deal-with-file-paths-on-windows-mac-and-linux-11a072b58d5f
 
@@ -209,7 +214,7 @@ def get_settings_default(section="", key=""):
     # settings which is preferable for automatic documentation
     if _settings_default is None:
         _settings_default = OrderedDict()
-        import expmgmt.config.settings_default
+        import expmgmt.config.settings
         _settings_default.update({
             get_general_settings_name(): get_settings_default(),
         })
@@ -254,3 +259,67 @@ _settings_default = { # default settings
 _settings_default_experiment = {
     "name": _DEFAULT_EXP_NAME
 }
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_local_settings(default=True):
+
+    if default:
+        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DEFAULT)
+        if not os.path.isfile(settings_file):
+            logger.debug("Settings file {0} with default experiment does not exist".format(settings_file))
+            return expmgmt.config.settings._settings_default_experiment
+
+    else:
+        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP)
+        if not os.path.isfile(settings_file):
+            logger.debug("Settings file {0} with experiment settings does not exist".format(settings_file))
+            return
+
+    data = expmgmt.utils.yaml.yaml_to_data(settings_file, raise_exception=True)
+    return data
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_projects_name():
+    
+    config = expmgmt.config.configfile.get_configuration()
+
+    return [
+        config[section][_PROJ_NAME] for section in config if _PROJ_NAME in config[section]
+    ]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_experiments_name():
+    exp_settings = get_local_settings(default=False)
+    
+    if exp_settings is None:
+        return [_DEFAULT_EXP_NAME]
+    else:
+        return [item["name"] for item in exp_settings]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_experiment_settings(
+        experiment=_DEFAULT_EXP_NAME
+    ):
+    
+    default_settings = get_local_settings()
+    optional_default_settings = expmgmt.config.configfile.get_section(_DEFAULT_EXP_NAME)
+    
+    if optional_default_settings is not dict():
+        default_settings.update(optional_default_settings)
+
+    experiment_object = None
+    if experiment in get_experiments_name():
+        experiment_settings = get_local_settings(default=False)
+        if experiment_settings is not None:
+            for item in experiment_settings:
+                if item["name"] == experiment:
+                    default_settings.update(item)
+                    return default_settings
+    elif experiment != _DEFAULT_EXP_NAME:
+        raise expmgmt.debug.exceptions.DefaultExperimentMissing(experiment)
+    
+    return default_settings

@@ -32,8 +32,8 @@ Cli
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.commands
-import expmgmt.config.settings_default
-import expmgmt.config.settings_user
+import expmgmt.config.settings
+import expmgmt.config.settings
 import expmgmt.config.experiment
 
 import click
@@ -111,8 +111,8 @@ class MultiCommand(click.MultiCommand):
     "-p",
     "--project",
     help="Set the current project.",
-    type=click.Choice([*expmgmt.config.settings_user.get_projects_name()]),
-    default=lambda: expmgmt.config.settings_default._DEFAULT_EXP_NAME if not os.environ.get(expmgmt.config.settings_default._ENV_PROJECT) else os.environ.get(expmgmt.config.settings_default._ENV_PROJECT)
+    type=click.Choice([*expmgmt.config.settings.get_projects_name()]),
+    default=lambda: expmgmt.config.settings._DEFAULT_EXP_NAME if not os.environ.get(expmgmt.config.settings._ENV_PROJECT) else os.environ.get(expmgmt.config.settings._ENV_PROJECT)
 )
 @click.option(
     "-v",

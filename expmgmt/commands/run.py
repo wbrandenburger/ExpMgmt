@@ -36,9 +36,9 @@ Cli
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.config.configfile
-import expmgmt.config.settings_default
+import expmgmt.config.settings
 import expmgmt.config.experiment
-import expmgmt.config.settings_user
+import expmgmt.config.settings
 import expmgmt.utils.yaml
 
 import click
@@ -71,7 +71,7 @@ def pass_settings(
     )
 
     # get user defined settings
-    data =  expmgmt.config.settings_user.get_experiment_settings(
+    data =  expmgmt.config.settings.get_experiment_settings(
         experiment=experiment
     )
     # write user defined settings to tempory file
@@ -83,11 +83,11 @@ def pass_settings(
 # ---------------------------------------------------------------------------
 def run(
         arguments=[],
-        experiment=expmgmt.config.settings_default._DEFAULT_EXP_NAME
+        experiment=expmgmt.config.settings._DEFAULT_EXP_NAME
     ):
     
     path = expmgmt.config.configfile.get(
-        expmgmt.config.settings_default._MAIN_PROJ_FILE, required=False
+        expmgmt.config.settings._MAIN_PROJ_FILE, required=False
     )
 
     if not os.path.exists(path):
@@ -128,9 +128,9 @@ def run(
 @click.option(
     "-e",
     "--experiment",
-    help="Pass the settings of the current experiment defined in {0}".format(expmgmt.config.settings_default._ENV_PROJECT),
-    type=click.Choice([expmgmt.config.settings_default._DEFAULT_EXP_NAME, *expmgmt.config.settings_user.get_experiments_name()]),
-    default=expmgmt.config.settings_default._DEFAULT_EXP_NAME
+    help="Pass the settings of the current experiment defined in {0}".format(expmgmt.config.settings._ENV_PROJECT),
+    type=click.Choice([expmgmt.config.settings._DEFAULT_EXP_NAME, *expmgmt.config.settings.get_experiments_name()]),
+    default=expmgmt.config.settings._DEFAULT_EXP_NAME
 )
 def cli(
         arguments,

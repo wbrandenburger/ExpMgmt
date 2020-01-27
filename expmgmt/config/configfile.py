@@ -5,7 +5,7 @@
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.utils.configuration
-import expmgmt.config.settings_default
+import expmgmt.config.settings
 import expmgmt.debug.exceptions
 import expmgmt.config.experiment
 
@@ -53,13 +53,13 @@ def general_get(key, section=None, data_type=None, required=False):
 
     config = get_configuration()
     expname = expmgmt.config.experiment.get_proj_name()  
-    global_section = expmgmt.config.settings_default.get_general_settings_name() 
+    global_section = expmgmt.config.settings.get_general_settings_name() 
     specialized_key = section + "-" + key if section is not None else key
     extras = [(section, key)] if section is not None else []
     sections = [(global_section, specialized_key)] +\
         extras + [(expname, specialized_key)]
     
-    settings_default = expmgmt.config.settings_default.get_settings_default()
+    settings_default = expmgmt.config.settings.get_settings_default()
 
     # Check data type for setting getter method
     if data_type == int:
@@ -189,7 +189,7 @@ def get_configuration():
         logger.debug("Creating configuration")
         _CONFIGURATION = expmgmt.utils.configuration.Configuration()
         # Handle local configuration file, and merge it if it exists
-        merge_configuration_from_path(get(expmgmt.config.settings_default._LOCAL_CONFIG), _CONFIGURATION)
+        merge_configuration_from_path(get(expmgmt.config.settings._LOCAL_CONFIG), _CONFIGURATION)
     return _CONFIGURATION
 
 #   function ----------------------------------------------------------------

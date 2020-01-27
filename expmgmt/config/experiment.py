@@ -5,7 +5,7 @@
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.config.configfile
-import expmgmt.config.settings_default
+import expmgmt.config.settings
 import expmgmt.utils.experiment
 
 import os
@@ -78,7 +78,7 @@ def get_exp_from_name(expname):
         if name not in config.keys():
             raise Exception('Experiment {0} not defined'.format(expname))
         try:
-            paths = [os.path.expanduser(config[name][ expmgmt.config.settings_default._LOCAL_DIR])]
+            paths = [os.path.expanduser(config[name][ expmgmt.config.settings._LOCAL_DIR])]
         except KeyError:
             try:
                 paths = eval(os.path.expanduser(config[name].get("local-dir")))  # @todo[to change]:
@@ -122,18 +122,18 @@ def get_exp():
 
     global _CURRENT_EXPERIMENT
     if _CURRENT_EXPERIMENT is None:
-        if os.environ.get(expmgmt.config.settings_default._ENV_PROJECT):
+        if os.environ.get(expmgmt.config.settings._ENV_PROJECT):
             logger.debug("Environment variable '{0}' found with value '{1}'".format(
-                expmgmt.config.settings_default._ENV_PROJECT,
-                os.environ.get(expmgmt.config.settings_default._ENV_PROJECT)
+                expmgmt.config.settings._ENV_PROJECT,
+                os.environ.get(expmgmt.config.settings._ENV_PROJECT)
                 )
             )
             set_exp_from_name(
-                os.environ[expmgmt.config.settings_default._ENV_PROJECT]
+                os.environ[expmgmt.config.settings._ENV_PROJECT]
             ) 
         if _CURRENT_EXPERIMENT is None:
             # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
-            exp = expmgmt.config.settings_default.get_settings_default(key=expmgmt.config.settings_default._DEFAULT_PROJ)
+            exp = expmgmt.config.settings.get_settings_default(key=expmgmt.config.settings._DEFAULT_PROJ)
             set_exp_from_name(exp)
 
     assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.utils.experiment.Experiment))
