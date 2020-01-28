@@ -19,20 +19,21 @@ from pathlib import Path # @todo[to change]: https://medium.com/@ageitgey/python
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 _GENERAL_SETTINGS_NAME = "settings"
+_DEFAULT_PROJ_NAME = "project"
+_DEFAULT_EXP_NAME = "default"
 
 _ENV_PROJECT = "EXPMGMT_PROJECT"
 
 _DEFAULT_PROJ = "default-proj"
 _PROJ_NAME = "proj-name"
+
 _LOCAL_DIR = "local-dir"
 _LOCAL_CONFIG = "local-config"
-_LOCAL_SETTINGS_EXP = "local-settings-experiments"
 _LOCAL_SETTINGS_DEFAULT = "local-settings-default"
+_LOCAL_SETTINGS_EXP = "local-settings-experiments"
+_LOCAL_SETTINGS_DATA = "local-settings-data"
 
 _MAIN_PROJ_FILE = "main-proj-file"
-
-_DEFAULT_PROJ_NAME = "project"
-_DEFAULT_EXP_NAME = "default"
 
 _PROJECT_DIR = "projects"
 _SCRIPT_DIR = "scripts"
@@ -252,7 +253,8 @@ _settings_default = { # default settings
         _LOCAL_DIR: get_projects_folder(),
         _LOCAL_CONFIG: "${{{0}}}\{1}.ini".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
         _LOCAL_SETTINGS_DEFAULT : "${{{0}}}\{1}-default.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
-        _LOCAL_SETTINGS_EXP : "${{{0}}}\{1}-experiments.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME)
+        _LOCAL_SETTINGS_EXP : "${{{0}}}\{1}-experiments.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
+        _LOCAL_SETTINGS_DATA : "${{{0}}}\{1}-data.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME)
     }
 }
 
@@ -262,19 +264,20 @@ _settings_default_experiment = {
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_local_settings(default=True):
+def get_local_settings(default=True, data=False):
 
-    if default:
-        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DEFAULT)
-        if not os.path.isfile(settings_file):
-            logger.debug("Settings file {0} with default experiment does not exist".format(settings_file)) # @log
-            return expmgmt.config.settings._settings_default_experiment
-
+    if data:
+        default=False
+        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DATA)
     else:
-        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP)
-        if not os.path.isfile(settings_file):
-            logger.debug("Settings file {0} with experiment settings does not exist".format(settings_file)) # @log
-            return
+        if default:
+            settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DEFAULT)
+        else:
+            settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP)
+
+    if not os.path.isfile(settings_file):
+        logger.debug("Settings file {0} with default experiment does not exist".format(settings_file)) # @log
+        return expmgmt.config.settings._settings_default_experiment if default else None
 
     data = expmgmt.utils.yaml.yaml_to_data(settings_file, raise_exception=True)
     return data
@@ -302,7 +305,8 @@ def get_experiments_name():
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_experiment_settings(
-        experiment=_DEFAULT_EXP_NAME
+        experiment=_DEFAULT_EXP_NAME,
+        data = False
     ):
     
     default_settings = get_local_settings()
@@ -322,4 +326,4 @@ def get_experiment_settings(
     elif experiment != _DEFAULT_EXP_NAME:
         raise expmgmt.debug.exceptions.DefaultExperimentMissing(experiment)
     
-    return default_settings
+    return {"settings" : default_settings, "data" : get_local_settings(data=True)} if data else default_settings

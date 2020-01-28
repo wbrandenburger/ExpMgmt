@@ -98,11 +98,11 @@ def run(
     """
     
     if projects:
-        return expmgmt.config.settings.get_projects_name()
+        expmgmt.utils.format.print_data(expmgmt.config.settings.get_projects_name())
     elif experiments:
-        return expmgmt.config.settings.get_experiments_name()
+        expmgmt.utils.format.print_data(expmgmt.config.settings.get_experiments_name())
     else:
-        return expmgmt.config.settings.get_experiment_settings(experiment=experiment)
+        expmgmt.utils.format.print_data(expmgmt.config.settings.get_experiment_settings(experiment=experiment))
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -144,5 +144,3 @@ def cli(
         experiments=experiments,
         experiment = experiment
     )
-
-    expmgmt.utils.format.print_data(result)
