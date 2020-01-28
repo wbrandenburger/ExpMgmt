@@ -91,7 +91,7 @@ def run(
     )
 
     if not os.path.exists(path):
-        logger.warning("Running main experiment file: File {0} does not exist.".format(path))
+        logger.warning("Running main experiment file: File {0} does not exist.".format(path)) # @log
         return
 
     # get temporary file with user defined settings
@@ -106,8 +106,8 @@ def run(
         cmd_args.append(" ".join(arguments))
     cmd = " ".join(cmd_args)
     
-    logger.debug("Running main experiment file {0}.".format(path))
-    logger.debug("Call '{0}'".format(cmd))
+    logger.debug("Running main experiment file {0}.".format(path)) # @log
+    logger.debug("Call '{0}'".format(cmd)) # @log
 
     subprocess.call(cmd)
     

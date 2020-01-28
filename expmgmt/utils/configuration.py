@@ -54,16 +54,16 @@ class Configuration(ConfigParser):
             
         # read additional configuration files if exists
         for name in self["include"]:
-            self.logger.debug("Including {0}".format(name))
+            self.logger.debug("Including {0}".format(name))  # @log
             fullpath = os.path.expanduser(self.get("include", name))
             if os.path.exists(fullpath):
                 self.read(fullpath)
             else:
-                self.logger.warn(
+                self.logger.warning(
                     "{0} not included because it does not exist".format(
                         fullpath
                     )
-                )
+                ) # @log
 
     #   method --------------------------------------------------------------
     # -----------------------------------------------------------------------
@@ -75,7 +75,7 @@ class Configuration(ConfigParser):
         if not os.path.exists(self.dir_location):
             self.logger.warning(
                 'Creating configuration folder in %s' % self.dir_location
-            )
+            ) # @log
             os.makedirs(self.dir_location)
 
         # create scripts and experiments folder, e.g. /home/user/.config/scripts and /home/user/.config/experiments
@@ -90,7 +90,7 @@ class Configuration(ConfigParser):
             # read configurations file if it exists
             self.logger.debug(
                 'Reading configuration from {0}'.format(self.file_location)
-            )
+            ) # @log
             self.read(self.file_location)
             self.handle_includes()
         else:
@@ -106,6 +106,6 @@ class Configuration(ConfigParser):
         #   execute additional script files ---------------------------------
         configpy = expmgmt.config.settings.get_configpy_file()
         if os.path.exists(configpy):
-            self.logger.debug('Executing {0}'.format(configpy))
+            self.logger.debug('Executing {0}'.format(configpy)) # @log
             with open(configpy) as fd:
                 exec(fd.read())

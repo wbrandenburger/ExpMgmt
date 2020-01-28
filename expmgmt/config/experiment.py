@@ -65,7 +65,7 @@ def get_exp_from_name(expname):
                 "Since {0} exists, interpreting it as a experiment".format(
                     expname
                 )
-            )
+            ) # @log
             experiment_obj = expmgmt.utils.experiment.from_paths([expname])
             name = experiment_obj.path_format()
             config[name] = dict(dirs=experiment_obj.paths)
@@ -126,8 +126,8 @@ def get_exp():
             logger.debug("Environment variable '{0}' found with value '{1}'".format(
                 expmgmt.config.settings._ENV_PROJECT,
                 os.environ.get(expmgmt.config.settings._ENV_PROJECT)
-                )
-            )
+                ) 
+            ) # @log
             set_exp_from_name(
                 os.environ[expmgmt.config.settings._ENV_PROJECT]
             ) 

@@ -72,7 +72,7 @@ def file_to_data(path, raise_exception=False):
         except Exception as e:
             if raise_exception:
                 raise ValueError(e)
-            logger.error("Yaml syntax error: \n\n{0}".format(e))
+            logger.error("Yaml syntax error: \n\n{0}".format(e)) # @log
             return dict()
         else:
             return data
@@ -96,7 +96,7 @@ def string_to_data(string, raise_exception=False):
     except Exception as e:
         if raise_exception:
             raise ValueError(e)
-        logger.error("Yaml syntax error: \n\n{0}".format(e))
+        logger.error("Yaml syntax error: \n\n{0}".format(e)) # @log
         return dict()
     else:
         return data

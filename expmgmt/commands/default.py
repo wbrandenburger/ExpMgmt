@@ -81,7 +81,7 @@ class MultiCommand(click.MultiCommand):
             script = self.scripts[name]
         except KeyError:            
             colorama.init() # general: colorama has to be activated 
-            self.logger.error(
+            self.logger.error( # @log
                 "{c.Fore.RED}{c.Style.BRIGHT}{c.Back.BLACK}"
                 "Did you mean {0}?"
                 "{c.Style.RESET_ALL}"
@@ -168,7 +168,7 @@ def run(
     )
     
     logger = logging.getLogger('default')
-    logger.debug("Plattform '{0}' detected.".format(sys.platform))
+    logger.debug("Plattform '{0}' detected.".format(sys.platform)) # @log
 
     # set the specified project
     if project:

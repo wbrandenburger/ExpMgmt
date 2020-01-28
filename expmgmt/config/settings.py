@@ -130,7 +130,7 @@ def get_config_file():
             get_config_folder(), "config.ini"
         )
 
-    logger.debug("Getting config file %s" % config_file)
+    logger.debug("Getting config file %s" % config_file) # @log
 
     return config_file
 
@@ -151,7 +151,7 @@ def set_config_file(filepath):
 
     global _OVERRIDE_VARS
 
-    logger.debug("Setting config file to %s" % filepath)
+    logger.debug("Setting config file to %s" % filepath) # @log
 
     _OVERRIDE_VARS["file"] = filepath
 
@@ -267,13 +267,13 @@ def get_local_settings(default=True):
     if default:
         settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DEFAULT)
         if not os.path.isfile(settings_file):
-            logger.debug("Settings file {0} with default experiment does not exist".format(settings_file))
+            logger.debug("Settings file {0} with default experiment does not exist".format(settings_file)) # @log
             return expmgmt.config.settings._settings_default_experiment
 
     else:
         settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP)
         if not os.path.isfile(settings_file):
-            logger.debug("Settings file {0} with experiment settings does not exist".format(settings_file))
+            logger.debug("Settings file {0} with experiment settings does not exist".format(settings_file)) # @log
             return
 
     data = expmgmt.utils.yaml.yaml_to_data(settings_file, raise_exception=True)

@@ -186,7 +186,7 @@ def get_configuration():
     """
     global _CONFIGURATION
     if _CONFIGURATION is None:
-        logger.debug("Creating configuration")
+        logger.debug("Creating configuration") # @log
         _CONFIGURATION = expmgmt.utils.configuration.Configuration()
         # Handle local configuration file, and merge it if it exists
         merge_configuration_from_path(get(expmgmt.config.settings._LOCAL_CONFIG), _CONFIGURATION)
@@ -205,9 +205,9 @@ def merge_configuration_from_path(path, configuration):
     :type  configuration: expmgmt.utils.configuration.Configuration
     """
     if not os.path.exists(path):
-        logger.warning("Merging configuration: File {0} does not exist.".format(path))
+        logger.warning("Merging configuration: File {0} does not exist.".format(path)) # @log
         return
-    logger.debug("Merging configuration from {0}".format(path))
+    logger.debug("Merging configuration from {0}".format(path)) # @log
     configuration.read(path)
     configuration.handle_includes()
 
@@ -221,8 +221,8 @@ def reset_configuration():
     """
     global _CONFIGURATION
     if _CONFIGURATION is not None:
-        logger.warning("Overwriting previous configuration")
+        logger.warning("Overwriting previous configuration") # @log
     _CONFIGURATION = None
-    logger.debug("Resetting configuration")
+    logger.debug("Resetting configuration") # @log
     return get_configuration()
 
