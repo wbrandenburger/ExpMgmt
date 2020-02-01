@@ -29,9 +29,10 @@ _PROJ_NAME = "proj-name"
 
 _LOCAL_DIR = "local-dir"
 _LOCAL_CONFIG = "local-config"
-_LOCAL_SETTINGS_DEFAULT = "local-settings-default"
-_LOCAL_SETTINGS_EXP = "local-settings-experiments"
-_LOCAL_SETTINGS_DATA = "local-settings-data"
+_LOCAL_SETTINGS_EXP = "local-experiments"
+_LOCAL_SETTINGS_DATA = "local-data"
+
+_USE_DATA = "use-data"
 
 _MAIN_PROJ_FILE = "main-proj-file"
 
@@ -252,7 +253,6 @@ _settings_default = { # default settings
         _PROJ_NAME : _DEFAULT_PROJ_NAME,
         _LOCAL_DIR: get_projects_folder(),
         _LOCAL_CONFIG: "${{{0}}}\{1}.ini".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
-        _LOCAL_SETTINGS_DEFAULT : "${{{0}}}\{1}-default.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
         _LOCAL_SETTINGS_EXP : "${{{0}}}\{1}-experiments.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
         _LOCAL_SETTINGS_DATA : "${{{0}}}\{1}-data.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME)
     }
@@ -264,16 +264,13 @@ _settings_default_experiment = {
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_local_settings(default=True, data=False):
+def get_local_settings(data=False):
 
     if data:
         default=False
         settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DATA)
     else:
-        if default:
-            settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DEFAULT)
-        else:
-            settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP)
+        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP)
 
     if not os.path.isfile(settings_file):
         logger.debug("Settings file {0} with default experiment does not exist".format(settings_file)) # @log
@@ -295,7 +292,7 @@ def get_projects_name():
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_experiments_name():
-    exp_settings = get_local_settings(default=False)
+    exp_settings = get_local_settings()
     
     if exp_settings is None:
         return [_DEFAULT_EXP_NAME]
@@ -305,25 +302,52 @@ def get_experiments_name():
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_experiment_settings(
-        experiment=_DEFAULT_EXP_NAME,
-        data = False
+        experiment=_DEFAULT_EXP_NAME
     ):
     
-    default_settings = get_local_settings()
-    optional_default_settings = expmgmt.config.configfile.get_section(_DEFAULT_EXP_NAME)
-    
-    if optional_default_settings is not dict():
-        default_settings.update(optional_default_settings)
+    settings = get_local_settings()
+    if settings is None:
+        raise ValueError("Nothing to process")
 
-    experiment_object = None
     if experiment in get_experiments_name():
-        experiment_settings = get_local_settings(default=False)
-        if experiment_settings is not None:
-            for item in experiment_settings:
-                if item["name"] == experiment:
-                    default_settings.update(item)
-                    return default_settings
+        default_setting = get_dict_elements(settings, 
+            "name", [_DEFAULT_EXP_NAME, experiment], update=True)
+
+        update_dict(default_setting, expmgmt.config.configfile.get_section(_DEFAULT_EXP_NAME))
     elif experiment != _DEFAULT_EXP_NAME:
         raise expmgmt.debug.exceptions.DefaultExperimentMissing(experiment)
     
-    return {"settings" : default_settings, "data" : get_local_settings(data=True)} if data else default_settings
+    return default_setting
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_dict_elements(dict_list, field, query, update=False):
+    if not isinstance(field, list) and isinstance(query, list): 
+        field = [field] * len(query)
+
+    result = list() if not update else dict()
+    if isinstance(field, list) and isinstance(query, list):
+        for field_item, query_item in zip(field, query):
+            item = get_dict_element(dict_list, field_item, query_item)
+            if item:
+                if not update:
+                    result.append(item)
+                else:
+                    result.update(item)
+
+    return result
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_dict_element(dict_list, field, query):
+    for item in dict_list:
+        if item[field] == query:
+            return item
+    return dict()
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def update_dict(a, b):
+    if a and b and isinstance(a, dict):
+        a.update(b)
+    return a
