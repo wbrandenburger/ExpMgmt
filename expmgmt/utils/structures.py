@@ -5,6 +5,7 @@
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def update_dict(a, b):
+    # @todo[comment]:
     if a and b and isinstance(a, dict):
         a.update(b)
     return a
@@ -12,6 +13,7 @@ def update_dict(a, b):
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_dict_element(dict_list, field, query):
+    # @todo[comment]:
     for item in dict_list:
         if item[field] == query:
             return item
@@ -20,6 +22,7 @@ def get_dict_element(dict_list, field, query):
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_dict_elements(dict_list, field, query, update=False):
+    # @todo[comment]:
     if not isinstance(field, list) and isinstance(query, list): 
         field = [field] * len(query)
 

@@ -35,7 +35,7 @@ Cli
 """
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import expmgmt.config.configfile
+import expmgmt.config.config
 import expmgmt.config.settings
 import expmgmt.config.experiment
 import expmgmt.config.settings
@@ -87,7 +87,7 @@ def run(
         experiment=expmgmt.config.settings._DEFAULT_EXP_NAME
     ):
     
-    path = expmgmt.config.configfile.get(
+    path = expmgmt.config.config.get(
         expmgmt.config.settings._MAIN_PROJ_FILE, required=False
     )
 

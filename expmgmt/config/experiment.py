@@ -4,7 +4,7 @@
 
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import expmgmt.config.configfile
+import expmgmt.config.config
 import expmgmt.config.settings
 import expmgmt.utils.experiment
 
@@ -31,7 +31,7 @@ def set_exp(experiment):
 
     assert(isinstance(experiment, expmgmt.utils.experiment.Experiment))
 
-    config = expmgmt.config.configfile.get_configuration()
+    config = expmgmt.config.config.get_configuration()
     if experiment.name not in config.keys():
         config[experiment.name] = dict(dirs=experiment.paths)
     _CURRENT_EXPERIMENT = experiment
@@ -57,7 +57,7 @@ def get_exp_from_name(expname):
 
     assert(isinstance(expname, str))
 
-    config = expmgmt.config.configfile.get_configuration()
+    config = expmgmt.config.config.get_configuration()
     if expname not in config.keys():
         if os.path.isdir(expname):
             # Check if the path exists, then use this path as a new experiment
@@ -132,7 +132,7 @@ def get_exp():
                 os.environ[expmgmt.config.settings._ENV_PROJECT]
             ) 
         if _CURRENT_EXPERIMENT is None:
-            # Do not put expmgmt.config.configfile.get because get is a special function that also needs the experiment to see if some key was overridden!
+            # Do not put expmgmt.config.config.get because get is a special function that also needs the experiment to see if some key was overridden!
             exp = expmgmt.config.settings.get_settings_default(key=expmgmt.config.settings._DEFAULT_PROJ)
             set_exp_from_name(exp)
 

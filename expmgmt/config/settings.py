@@ -4,7 +4,7 @@
 
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import expmgmt.config.configfile
+import expmgmt.config.config
 import expmgmt.config.experiment
 import expmgmt.utils.yaml
 import expmgmt.utils.structures
@@ -26,16 +26,13 @@ _DEFAULT_EXP_NAME = "default"
 _ENV_PROJECT = "EXPMGMT_PROJECT"
 
 _DEFAULT_PROJ = "default-proj"
-_PROJ_NAME = "proj-name"
+_PROJ_NAME = "name"
 
 _LOCAL_DIR = "local-dir"
 _LOCAL_CONFIG = "local-config"
 _LOCAL_SETTINGS_EXP = "local-experiments"
-_LOCAL_SETTINGS_DATA = "local-data"
 
-_USE_DATA = "use-data"
-
-_MAIN_PROJ_FILE = "main-proj-file"
+_MAIN_PROJ_FILE = "proj-file"
 
 _PROJECT_DIR = "projects"
 _SCRIPT_DIR = "scripts"
@@ -255,7 +252,6 @@ _settings_default = { # default settings
         _LOCAL_DIR: get_projects_folder(),
         _LOCAL_CONFIG: "${{{0}}}\{1}.ini".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
         _LOCAL_SETTINGS_EXP : "${{{0}}}\{1}-experiments.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME),
-        _LOCAL_SETTINGS_DATA : "${{{0}}}\{1}-data.json".format(_LOCAL_DIR, _DEFAULT_PROJ_NAME)
     }
 }
 
@@ -265,26 +261,18 @@ _settings_default_experiment = {
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_local_settings(data=False):
+def get_settings(file, description="", required=False):
 
-    if data:
-        default=False
-        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_DATA)
-    else:
-        settings_file = expmgmt.config.configfile.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP)
+    if not os.path.isfile(file):
+        logger.debug("File {0} {1} does not exist".format(file, description)) # @log
 
-    if not os.path.isfile(settings_file):
-        logger.debug("Settings file {0} with default experiment does not exist".format(settings_file)) # @log
-        return expmgmt.config.settings._settings_default_experiment if default else None
-
-    data = expmgmt.utils.yaml.yaml_to_data(settings_file, raise_exception=True)
-    return data
+    return expmgmt.utils.yaml.yaml_to_data(file, raise_exception=True)
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_projects_name():
     
-    config = expmgmt.config.configfile.get_configuration()
+    config = expmgmt.config.config.get_configuration()
 
     return [
         config[section][_PROJ_NAME] for section in config if _PROJ_NAME in config[section]
@@ -293,7 +281,7 @@ def get_projects_name():
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_experiments_name():
-    exp_settings = get_local_settings()
+    exp_settings = get_settings(expmgmt.config.config.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP))
     
     if exp_settings is None:
         return [_DEFAULT_EXP_NAME]
@@ -306,7 +294,7 @@ def get_experiment_settings(
         experiment=_DEFAULT_EXP_NAME
     ):
     
-    settings = get_local_settings()
+    settings = get_settings(expmgmt.config.config.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP))
     if settings is None:
         raise ValueError("Nothing to process")
 
@@ -314,8 +302,16 @@ def get_experiment_settings(
         default_setting = expmgmt.utils.structures.get_dict_elements(settings, 
             "name", [_DEFAULT_EXP_NAME, experiment], update=True)
 
-        expmgmt.utils.structures.update_dict(default_setting, expmgmt.config.configfile.get_section(_DEFAULT_EXP_NAME))
+        expmgmt.utils.structures.update_dict(default_setting, expmgmt.config.config.get_section(_DEFAULT_EXP_NAME))
     elif experiment != _DEFAULT_EXP_NAME:
         raise expmgmt.debug.exceptions.DefaultExperimentMissing(experiment)
     
     return default_setting
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# def get_data_settings(
+#         experiment="vaihingen"
+#     ):
+#     print()
+#     return

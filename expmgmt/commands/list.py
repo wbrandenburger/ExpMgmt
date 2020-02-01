@@ -71,7 +71,7 @@ Cli
 
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
-import expmgmt.config.configfile
+import expmgmt.config.config
 import expmgmt.config.settings
 import expmgmt.config.settings
 import expmgmt.utils.format
