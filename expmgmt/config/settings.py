@@ -7,6 +7,7 @@
 import expmgmt.config.configfile
 import expmgmt.config.experiment
 import expmgmt.utils.yaml
+import expmgmt.utils.structures
 
 from collections import OrderedDict
 import logging
@@ -310,44 +311,11 @@ def get_experiment_settings(
         raise ValueError("Nothing to process")
 
     if experiment in get_experiments_name():
-        default_setting = get_dict_elements(settings, 
+        default_setting = expmgmt.utils.structures.get_dict_elements(settings, 
             "name", [_DEFAULT_EXP_NAME, experiment], update=True)
 
-        update_dict(default_setting, expmgmt.config.configfile.get_section(_DEFAULT_EXP_NAME))
+        expmgmt.utils.structures.update_dict(default_setting, expmgmt.config.configfile.get_section(_DEFAULT_EXP_NAME))
     elif experiment != _DEFAULT_EXP_NAME:
         raise expmgmt.debug.exceptions.DefaultExperimentMissing(experiment)
     
     return default_setting
-
-#   function ----------------------------------------------------------------
-# ---------------------------------------------------------------------------
-def get_dict_elements(dict_list, field, query, update=False):
-    if not isinstance(field, list) and isinstance(query, list): 
-        field = [field] * len(query)
-
-    result = list() if not update else dict()
-    if isinstance(field, list) and isinstance(query, list):
-        for field_item, query_item in zip(field, query):
-            item = get_dict_element(dict_list, field_item, query_item)
-            if item:
-                if not update:
-                    result.append(item)
-                else:
-                    result.update(item)
-
-    return result
-
-#   function ----------------------------------------------------------------
-# ---------------------------------------------------------------------------
-def get_dict_element(dict_list, field, query):
-    for item in dict_list:
-        if item[field] == query:
-            return item
-    return dict()
-
-#   function ----------------------------------------------------------------
-# ---------------------------------------------------------------------------
-def update_dict(a, b):
-    if a and b and isinstance(a, dict):
-        a.update(b)
-    return a
