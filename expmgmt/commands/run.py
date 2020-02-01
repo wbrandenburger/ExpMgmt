@@ -72,8 +72,7 @@ def pass_settings(
 
     # get user defined settings
     data =  expmgmt.config.settings.get_experiment_settings(
-        experiment=experiment,
-        data=True
+        experiment=experiment
     )
     # write user defined settings to tempory file
     expmgmt.utils.yaml.data_to_yaml(tmp_object[1], data)

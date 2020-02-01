@@ -8,6 +8,7 @@ import expmgmt.config.config
 import expmgmt.config.experiment
 import expmgmt.utils.yaml
 import expmgmt.utils.structures
+import expmgmt.data.data
 
 from collections import OrderedDict
 import logging
@@ -168,6 +169,17 @@ def get_scripts_folder():
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
+def get_scripts():
+    
+    file_list = [os.path.splitext(f)[0] for f in os.listdir(get_scripts_folder()) if os.path.isfile(os.path.join(get_scripts_folder(), f))]
+
+    if file_list == list():
+        raise ValueError("The predefined task folder seems to be empty.")
+
+    return file_list
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def get_projects_folder():
     """Get folder where the projects are stored,
     e.g. /home/user/.config/expmgmt/projects
@@ -322,14 +334,23 @@ def get_data_settings(
     config = ConfigParser(interpolation=ExtendedInterpolation())
     config.read(data_config_file)
 
-
     settings = expmgmt.utils.yaml.yaml_to_data(config[experiment]["local-config"], raise_exception=True)
 
-    for item in settings.keys():
-        data_tensor = get_data_tensor(settings[item], fullpath=fullpath,sort=sort)
-        with open(os.path.join(config[experiment]["settings-dir"],"{0}.txt ".format(item)),"w+") as f:
-            for line in data_tensor:
-                f.write(" ".join("{}".format(x) for x in line)+"\n")
+    data = dict()
+    for setting in settings.keys():
+        setting_obj = settings[setting]
+        for setting_type in setting_obj.keys():
+            setting_type_obj = setting_obj[setting_type]
+            if not setting_type in data.keys():
+                data_tensor = get_data_tensor(setting_type_obj, fullpath=fullpath,sort=sort)
+                data[setting_type] = data_tensor
+                # @todo[change]: if not "default" raise error?
+            else:
+                task_func = getattr(expmgmt.data.data, setting_type_obj["func"])
+                data_tensor = task_func(data[setting_type], *setting_type_obj["parameter"])
+            with open(os.path.join(config[experiment]["settings-dir"],"{0}-{1}.txt ".format(setting, setting_type)),"w+") as f:
+                for line in data_tensor:
+                    f.write(" ".join("{}".format(x) for x in line)+"\n")
     return  
 
 #   function ----------------------------------------------------------------
