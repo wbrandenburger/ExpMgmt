@@ -83,7 +83,8 @@ def pass_settings(
 # ---------------------------------------------------------------------------
 def run(
         arguments=[],
-        experiment=expmgmt.config.settings._DEFAULT_EXP_NAME
+        experiment=expmgmt.config.settings._DEFAULT_EXP_NAME,
+        data = ()
     ):
     
     path = expmgmt.config.config.get(
@@ -102,6 +103,12 @@ def run(
         path,
         tmp_settings_path
     ]
+
+    if data:
+        cmd_args.append("--data")
+        cmd_args.extend(expmgmt.config.settings.get_dataset_setting_files(*data))
+
+
     if arguments:
         cmd_args.append(" ".join(arguments))
     cmd = " ".join(cmd_args)
@@ -132,13 +139,22 @@ def run(
     type=click.Choice([expmgmt.config.settings._DEFAULT_EXP_NAME, *expmgmt.config.settings.get_experiments_name()]),
     default=expmgmt.config.settings._DEFAULT_EXP_NAME
 )
+@click.option(
+    "-d",
+    "--data",
+    help="Pass the trainings, test and validation of the specified setting.",
+    nargs=2, 
+    type=(str, str)
+)
 def cli(
         arguments,
-        experiment
+        experiment,
+        data
     ):
     """Run an arbitrary shell command in the library folder"""
 
     run(
         arguments=arguments,
-        experiment=experiment
+        experiment=experiment,
+        data = data
     )

@@ -44,6 +44,8 @@ _OVERRIDE_VARS = {
     "scripts": None
 }
 
+_DATASET = None
+
 logger = logging.getLogger("config")
 
 #   lambda's ----------------------------------------------------------------
@@ -322,23 +324,101 @@ def get_experiment_settings(
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_data_settings(
-        experiment="vaihingen",
+def get_dataset(dataset):
+
+    from configparser import ConfigParser, ExtendedInterpolation
+
+    data_config_file = expmgmt.config.config.get("data-config")
+    with open(data_config_file) as f:
+        config = ConfigParser(interpolation=ExtendedInterpolation())
+        config.readfp(f)
+        sections = config.sections()
+        
+        return get_settings(config[dataset]["local-config"], description="", required=True)
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def set_dataset_config():
+    
+    from configparser import ConfigParser, ExtendedInterpolation
+    global _DATASET
+
+    data_config_file = expmgmt.config.config.get("data-config")
+    with open(data_config_file) as f:
+        _DATASET = ConfigParser(interpolation=ExtendedInterpolation())
+        _DATASET.readfp(f)
+    
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_dataset_setting(dataset):
+    if not _DATASET:
+        set_dataset_config()
+
+    return get_settings(_DATASET[dataset]["local-config"], description="", required=True)
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_datasets():
+    if not _DATASET:
+        set_dataset_config()
+    
+    sections = _DATASET.sections()
+    datasets = list()
+    for section in sections:
+        items = _DATASET.items(section)
+        for item in items:
+            if item[0] == "name":
+                datasets.append(item[1])
+
+    return datasets
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_dataset_settings(dataset):
+    if not _DATASET:
+        set_dataset_config()
+
+    result = list()
+    for dataset in get_datasets():
+        dataset_obj = get_dataset_setting(dataset)
+        if isinstance(dataset_obj,dict):
+            for setting in dataset_obj.keys():
+                if not file:
+                    result.append(setting)
+    return result
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_dataset_setting_files(dataset, setting):
+    if not _DATASET:
+        set_dataset_config()
+
+    result = list()
+    setting_obj = get_dataset_setting(dataset)[setting]
+    for setting_type in setting_obj.keys():
+        result.append(os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)))
+    return result
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_dataset_settings_dir(dataset):
+    if not _DATASET:
+        set_dataset_config()
+
+    return _DATASET[dataset]["settings-dir"]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def set_dataset(
+        dataset="vaihingen",
         fullpath=True,
         sort=True
     ):
-    data_config_file = expmgmt.config.config.get("data-config")
-
-
-    from configparser import ConfigParser, ExtendedInterpolation
-    config = ConfigParser(interpolation=ExtendedInterpolation())
-    config.read(data_config_file)
-
-    settings = expmgmt.utils.yaml.yaml_to_data(config[experiment]["local-config"], raise_exception=True)
+    dataset_obj = get_dataset_setting(dataset)
 
     data = dict()
-    for setting in settings.keys():
-        setting_obj = settings[setting]
+    for setting in dataset_obj.keys():
+        setting_obj = dataset_obj[setting]
         for setting_type in setting_obj.keys():
             setting_type_obj = setting_obj[setting_type]
             if not setting_type in data.keys():
@@ -348,7 +428,7 @@ def get_data_settings(
             else:
                 task_func = getattr(expmgmt.data.data, setting_type_obj["func"])
                 data_tensor = task_func(data[setting_type], *setting_type_obj["parameter"])
-            with open(os.path.join(config[experiment]["settings-dir"],"{0}-{1}.txt ".format(setting, setting_type)),"w+") as f:
+            with open(os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)),"w+") as f:
                 for line in data_tensor:
                     f.write(" ".join("{}".format(x) for x in line)+"\n")
     return  
