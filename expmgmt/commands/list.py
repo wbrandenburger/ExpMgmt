@@ -89,7 +89,8 @@ logger = logging.getLogger('list')
 def run(
         projects,
         experiments,
-        experiment
+        experiment,
+        data
     ):
     """Main method to the list command
 
@@ -101,6 +102,8 @@ def run(
         expmgmt.utils.format.print_data(expmgmt.config.settings.get_projects_name())
     elif experiments:
         expmgmt.utils.format.print_data(expmgmt.config.settings.get_experiments_name())
+    elif data:
+        expmgmt.config.settings.get_data_settings()
     else:
           expmgmt.utils.format.print_data(expmgmt.config.settings.get_experiment_settings(experiment=experiment))
 
@@ -132,15 +135,23 @@ def run(
     type=click.Choice([expmgmt.config.settings._DEFAULT_EXP_NAME, *expmgmt.config.settings.get_experiments_name()]),
     default=expmgmt.config.settings._DEFAULT_EXP_NAME
 )
+@click.option(
+    "--data",
+    help="Show the data names of current project",
+    is_flag=True,
+    default=False
+)
 def cli(
         projects,
         experiments,
-        experiment
+        experiment,
+        data
     ):
     """List experiments' properties"""
  
     result = run(
         projects=projects,
         experiments=experiments,
-        experiment = experiment
+        experiment = experiment,
+        data = data
     )

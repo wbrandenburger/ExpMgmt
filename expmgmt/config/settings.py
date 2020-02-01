@@ -310,8 +310,82 @@ def get_experiment_settings(
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-# def get_data_settings(
-#         experiment="vaihingen"
-#     ):
-#     print()
-#     return
+def get_data_settings(
+        experiment="vaihingen",
+        fullpath=True,
+        sort=True
+    ):
+    data_config_file = expmgmt.config.config.get("data-config")
+
+
+    from configparser import ConfigParser, ExtendedInterpolation
+    config = ConfigParser(interpolation=ExtendedInterpolation())
+    config.read(data_config_file)
+
+
+    settings = expmgmt.utils.yaml.yaml_to_data(config[experiment]["local-config"], raise_exception=True)
+
+    for item in settings.keys():
+        data_tensor = get_data_tensor(settings[item], fullpath=fullpath,sort=sort)
+        with open(os.path.join(config[experiment]["settings-dir"],"{0}.txt ".format(item)),"w+") as f:
+            for line in data_tensor:
+                f.write(" ".join("{}".format(x) for x in line)+"\n")
+    return  
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_file_list(path, fullpath=True, sort=True):
+    file_list = sorted(os.listdir(path)) if sort else os.listdir(path)
+    file_list = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+
+    return  [os.path.join(path,f) for f in file_list] if fullpath else  file_list
+    
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_pattern_list(path, regex, group, sort=True):
+    import re
+    pattern = re.compile(regex)
+    return [pattern.search(f).group(group) for f in get_file_list(path,sort=sort)]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_pattern_list_related_to_regex_list(path, regex, group, regex_list, fullpath=False, sort=True):
+    import re
+    
+    file_list = get_file_list(path, fullpath=fullpath, sort=sort)
+
+    result_file_list = [None]*(len(file_list))
+    for c_regex, item in enumerate(regex_list):
+        pattern = re.compile(regex.replace("%(ref)s",item))
+        for c_files, f in enumerate(file_list):
+            result_search = pattern.search(f)
+            if result_search:
+                result_file_list[c_regex] = file_list[c_files]
+
+    return result_file_list
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_data_tensor(object, fullpath=False, sort=True):
+    
+    if isinstance(object, list) and len(object)>0:
+        obj_iter = iter(object)
+        obj_item = next(obj_iter)
+
+        lists = list()
+        lists.append(get_file_list(obj_item["dir"], fullpath=fullpath, sort=sort))
+
+        regex_list = get_pattern_list(obj_item["dir"], obj_item["regex"],obj_item["group"], sort=sort)
+
+        while True:
+            try:
+                obj_item = next(obj_iter)
+            except StopIteration:
+                # if StopIteration is raised, break from loop
+                break
+            lists.append(get_pattern_list_related_to_regex_list(obj_item["dir"], obj_item["regex"], obj_item["group"], regex_list, fullpath=fullpath, sort=sort))
+
+    
+    return [data_tuple for data_tuple in zip(*lists)]
+
+
