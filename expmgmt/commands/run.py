@@ -121,7 +121,7 @@ def run(
     logger.debug("Running main experiment file {0}.".format(path)) # @log
     logger.debug("Call '{0}'".format(cmd)) # @log
 
-    # subprocess.call(cmd)
+    subprocess.call(cmd)
     
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
