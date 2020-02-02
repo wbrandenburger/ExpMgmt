@@ -85,9 +85,9 @@ setuptools.setup(
 
         ],
         "expmgmt.command": [
-            "data=expmgmt.commands.data:cli"
+            "data=expmgmt.commands.data:cli",
             "list=expmgmt.commands.list:cli",
-            "run=expmgmt.commands.run:cli"
+            "run=expmgmt.commands.run:cli",
         ],
     },
     platforms=["linux", "osx", "windows"],

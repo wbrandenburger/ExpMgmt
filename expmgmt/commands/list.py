@@ -34,7 +34,7 @@ def run(
     elif experiments:
         expmgmt.utils.format.print_data(expmgmt.config.settings.get_experiments_name())
     else:
-          expmgmt.utils.format.print_data(expmgmt.config.settings.get_experiment_settings(experiment=experiment))
+        expmgmt.utils.format.print_data(expmgmt.config.settings.get_experiment_settings(experiment=experiment))
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -67,7 +67,7 @@ def run(
 def cli(
         projects,
         experiments,
-        experiment,
+        experiment
     ):
     """List experiments' properties"""
  
