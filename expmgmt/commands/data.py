@@ -36,7 +36,7 @@ def run(
     "--help" 
 )
 @click.option(
-    "-s"
+    "-s",
     "--set_data",
     help="Set the setting files for the specified datasets",
     type=click.Choice(["none",*expmgmt.config.settings.get_datasets()]),
@@ -46,7 +46,7 @@ def cli(
         set_data,
     ):
     """List experiments' properties"""
- 
+
     run(
         dataset = set_data
     )

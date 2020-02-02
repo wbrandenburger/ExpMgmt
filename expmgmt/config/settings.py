@@ -395,8 +395,9 @@ def get_dataset_setting_files(dataset, setting):
     if not _DATASET:
         set_dataset_config()
 
-    result = {"dataset": dataset, "setting": setting}
     setting_obj = get_dataset_setting(dataset)[setting]
+
+    result = {"dataset": dataset, "setting": setting}
     for setting_type in setting_obj.keys():
         if not setting_type == "meta":
             result[setting_type] = (os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)))
@@ -409,6 +410,14 @@ def get_dataset_settings_dir(dataset):
         set_dataset_config()
 
     return _DATASET[dataset]["settings-dir"]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def get_dataset_meta_settings(dataset, setting):
+    if not _DATASET:
+        set_dataset_config()
+
+    return get_dataset_setting(dataset)[setting]["meta"]
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -426,16 +435,17 @@ def set_dataset(
             setting_type_obj = setting_obj[setting_type]
             if setting_type == "meta":
                 x=1 # @todo[change]:  
-            elif not setting_type in data.keys():
-                data_tensor = get_data_tensor(setting_type_obj, fullpath=fullpath,sort=sort)
-                data[setting_type] = data_tensor
-                # @todo[change]: if not "default" raise error?
             else:
-                task_func = getattr(expmgmt.data.data, setting_type_obj["func"])
-                data_tensor = task_func(data[setting_type], *setting_type_obj["parameter"])
-            with open(os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)),"w+") as f:
-                for line in data_tensor:
-                    f.write(" ".join("{}".format(x) for x in line)+"\n")
+                if not setting_type in data.keys():
+                    data_tensor = get_data_tensor(setting_type_obj, fullpath=fullpath,sort=sort)
+                    data[setting_type] = data_tensor
+                    # @todo[change]: if not "default" raise error?
+                else:
+                    task_func = getattr(expmgmt.data.data, setting_type_obj["func"])
+                    data_tensor = task_func(data[setting_type], *setting_type_obj["parameter"])
+                with open(os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)),"w+") as f:
+                    for line in data_tensor:
+                        f.write(" ".join("{}".format(x) for x in line)+"\n")
     return  
 
 #   function ----------------------------------------------------------------

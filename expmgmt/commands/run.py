@@ -50,6 +50,11 @@ def pass_settings(
                 *data_setting
             )
         )
+        experiment_setting.update(
+            expmgmt.config.settings.get_dataset_meta_settings(
+                *data_setting
+            )
+        )
 
     # write user defined settings to tempory file
     logger.info("Write experiment and data settings to file '{0}'".format(tmp_object[1]))
