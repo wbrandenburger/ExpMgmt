@@ -383,8 +383,7 @@ def get_dataset_settings(dataset):
         dataset_obj = get_dataset_setting(dataset)
         if isinstance(dataset_obj,dict):
             for setting in dataset_obj.keys():
-                if not file:
-                    result.append(setting)
+                result.append(setting)
     return result
 
 #   function ----------------------------------------------------------------
@@ -393,10 +392,10 @@ def get_dataset_setting_files(dataset, setting):
     if not _DATASET:
         set_dataset_config()
 
-    result = list()
+    result = {"dataset": dataset, "setting": setting}
     setting_obj = get_dataset_setting(dataset)[setting]
     for setting_type in setting_obj.keys():
-        result.append(os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)))
+        result[setting_type] = (os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)))
     return result
 
 #   function ----------------------------------------------------------------

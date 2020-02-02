@@ -59,7 +59,8 @@ logger = logging.getLogger('run')
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def pass_settings(
-        experiment
+        experiment,
+        data_setting = ()
     ):
 
     # create a temporary file
@@ -71,11 +72,20 @@ def pass_settings(
     )
 
     # get user defined settings
-    data =  expmgmt.config.settings.get_experiment_settings(
+    experiment_setting =  expmgmt.config.settings.get_experiment_settings(
         experiment=experiment
     )
+
+    if not data_setting == ():
+        experiment_setting.update(
+            expmgmt.config.settings.get_dataset_setting_files(
+                *data_setting
+            )
+        )
+
     # write user defined settings to tempory file
-    expmgmt.utils.yaml.data_to_yaml(tmp_object[1], data)
+    logger.info("Write experiment and data settings to file '{0}'".format(tmp_object[1]))
+    expmgmt.utils.yaml.data_to_yaml(tmp_object[1], experiment_setting)
 
     return tmp_object[1]
 
@@ -84,7 +94,7 @@ def pass_settings(
 def run(
         arguments=[],
         experiment=expmgmt.config.settings._DEFAULT_EXP_NAME,
-        data = ()
+        data_setting = ()
     ):
     
     path = expmgmt.config.config.get(
@@ -96,18 +106,13 @@ def run(
         return
 
     # get temporary file with user defined settings
-    tmp_settings_path = pass_settings(experiment)
+    tmp_settings_path = pass_settings(experiment, data_setting)
     
     cmd_args = [
         "python", 
         path,
         tmp_settings_path
     ]
-
-    if data:
-        cmd_args.append("--data")
-        cmd_args.extend(expmgmt.config.settings.get_dataset_setting_files(*data))
-
 
     if arguments:
         cmd_args.append(" ".join(arguments))
@@ -116,7 +121,7 @@ def run(
     logger.debug("Running main experiment file {0}.".format(path)) # @log
     logger.debug("Call '{0}'".format(cmd)) # @log
 
-    subprocess.call(cmd)
+    # subprocess.call(cmd)
     
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -142,9 +147,12 @@ def run(
 @click.option(
     "-d",
     "--data",
-    help="Pass the trainings, test and validation of the specified setting.",
+    help="Pass the trainings, test and validation of the specified dataset setting.",
     nargs=2, 
-    type=(str, str)
+    type=(
+        click.Choice(["none",*expmgmt.config.settings.get_datasets()]), str
+    ),
+    default=("none","")
 )
 def cli(
         arguments,
@@ -153,8 +161,19 @@ def cli(
     ):
     """Run an arbitrary shell command in the library folder"""
 
+    data_setting = ()
+    if not data[0] == "none":
+        data_setting= data
+        
+        if not data_setting[1] in expmgmt.config.settings.get_dataset_settings(data_setting[0]):
+            raise ValueError("Error: Invalid value for '-d' / '--data': invalid choice: {0}. (choose from {1})".format(
+                data_setting[1], 
+                expmgmt.config.settings.get_dataset_settings(data_setting[0])
+                )
+            )
+
     run(
         arguments=arguments,
         experiment=experiment,
-        data = data
+        data_setting = data_setting
     )
