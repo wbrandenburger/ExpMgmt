@@ -47,6 +47,7 @@ _OVERRIDE_VARS = {
 _DATASET = None
 _DEFAULT_DATASET = "default-dataset"
 _DEFAULT_SETTING = "default-setting"
+_META_DATA = ["type"]
 
 logger = logging.getLogger("config")
 
@@ -411,7 +412,7 @@ def get_dataset_settings_dir(dataset):
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def set_dataset(
-        dataset="vaihingen",
+        dataset,
         fullpath=True,
         sort=True
     ):
@@ -422,7 +423,9 @@ def set_dataset(
         setting_obj = dataset_obj[setting]
         for setting_type in setting_obj.keys():
             setting_type_obj = setting_obj[setting_type]
-            if not setting_type in data.keys():
+            if setting_type == "meta":
+                x=1 # @todo[change]:  
+            elif not setting_type in data.keys():
                 data_tensor = get_data_tensor(setting_type_obj, fullpath=fullpath,sort=sort)
                 data[setting_type] = data_tensor
                 # @todo[change]: if not "default" raise error?
@@ -475,6 +478,7 @@ def get_data_tensor(object, fullpath=False, sort=True):
         obj_item = next(obj_iter)
 
         lists = list()
+        metadata = dict
         lists.append(get_file_list(obj_item["dir"], fullpath=fullpath, sort=sort))
 
         regex_list = get_pattern_list(obj_item["dir"], obj_item["regex"],obj_item["group"], sort=sort)

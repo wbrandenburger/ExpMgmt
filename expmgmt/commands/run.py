@@ -1,44 +1,12 @@
 # ===========================================================================
 #   run.py ------------------------------------------------------------------
 # ===========================================================================
-"""
-This command is useful to issue commands in the directory of your library.
 
-CLI Examples
-^^^^^^^^^^^^
-
-    - List files in your directory
-
-    .. code::
-
-        papis run ls
-
-    - Find a file in your directory using the ``find`` command
-
-    .. code::
-
-        papis run find -name 'document.pdf'
-
-Python examples
-^^^^^^^^^^^^^^^
-
-.. code::python
-
-    from papis.commands.run import run
-
-    run(library='papers', command=["ls", "-a"])
-
-Cli
-^^^
-.. click:: papis.commands.run:cli
-    :prog: papis run
-"""
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.config.config
 import expmgmt.config.settings
 import expmgmt.config.experiment
-import expmgmt.config.settings
 import expmgmt.utils.yaml
 
 import click

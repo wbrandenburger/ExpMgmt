@@ -1,38 +1,10 @@
 # ===========================================================================
 #   default.py --------------------------------------------------------------
 # ===========================================================================
-"""
 
-Examples
-^^^^^^^^
-
-- To override some configuration options, you can use the flag ``--set``, for
-  instance, if you want to override the editor used and the opentool to open
-  documents, you can just type
-
-    .. code:: shell
-
-        expmgmt --set editor gedit --set opentool firefox edit
-        expmgmt --set editor gedit --set opentool firefox open
-
-- If you want to list the libraries and pick one before sending a database
-  query to expmgmt, use ``--pick-lib`` as such
-
-    .. code:: shell
-
-        expmgmt --pick-lib open 'einstein relativity'
-
-Cli
-^^^
-.. click:: expmgmt.commands.default:run
-    :prog: expmgmt
-    :commands: []
-
-"""
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.commands
-import expmgmt.config.settings
 import expmgmt.config.settings
 import expmgmt.config.experiment
 
