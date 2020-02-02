@@ -45,6 +45,8 @@ _OVERRIDE_VARS = {
 }
 
 _DATASET = None
+_DEFAULT_DATASET = "default-dataset"
+_DEFAULT_SETTING = "default-setting"
 
 logger = logging.getLogger("config")
 

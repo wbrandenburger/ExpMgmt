@@ -147,30 +147,46 @@ def run(
 @click.option(
     "-d",
     "--data",
-    help="Pass the trainings, test and validation of the specified dataset setting.",
+    help="Pass the trainings, test and validation of the specified dataset setting",
     nargs=2, 
     type=(
-        click.Choice(["none",*expmgmt.config.settings.get_datasets()]), str
+        click.Choice(["default",*expmgmt.config.settings.get_datasets()]), str
     ),
-    default=("none","")
+    default=("default","")
+)
+@click.option(
+    "--nodata",
+    help="Pass no trainings, test and validation data",
+    is_flag=True,
+    default=False
 )
 def cli(
         arguments,
         experiment,
-        data
+        data,
+        nodata
     ):
     """Run an arbitrary shell command in the library folder"""
 
-    data_setting = ()
-    if not data[0] == "none":
-        data_setting= data
-        
-        if not data_setting[1] in expmgmt.config.settings.get_dataset_settings(data_setting[0]):
-            raise ValueError("Error: Invalid value for '-d' / '--data': invalid choice: {0}. (choose from {1})".format(
-                data_setting[1], 
-                expmgmt.config.settings.get_dataset_settings(data_setting[0])
-                )
+
+    if not nodata:
+        if data[0] == "default":
+            data_setting = (
+                expmgmt.config.config.get
+                (expmgmt.config.settings._DEFAULT_DATASET),
+                expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
             )
+        elif not data[0] == "none":
+            data_setting = data
+            
+            if not data_setting[1] in expmgmt.config.settings.get_dataset_settings(data_setting[0]):
+                raise ValueError("Error: Invalid value for '-d' / '--data': invalid choice: {0}. (choose from {1})".format(
+                    data_setting[1], 
+                    expmgmt.config.settings.get_dataset_settings(data_setting[0])
+                    )
+                )
+    else:
+        data_setting = ()
 
     run(
         arguments=arguments,
