@@ -37,22 +37,6 @@ setuptools.setup(
         "stevedore>=1.30",
         "configparser>=3.0.0",
         "PyYAML>=3.12",
-        # "requests>=2.11.1",
-        # "filetype>=1.0.1",
-        # "pyparsing>=2.2.0",
-        # "arxiv2bib>=1.0.7",
-        # "chardet>=3.0.2",
-        # "beautifulsoup4>=4.4.1",
-        # "bibtexparser>=0.6.2",
-        # "python-slugify>=1.2.6",
-        # "habanero>=0.6.0",
-        # "isbnlib>=3.9.1,<4.0.0",
-        # "prompt_toolkit>=2.0.5",
-        # "tqdm>=4.1",
-        # "pygments>=2.2.0",
-        # "python-doi>=0.1.1",
-        # "lxml",
-        # "validators>=0.13.0"
     ],
     python_requires=">=3",
     classifiers=[
@@ -80,11 +64,6 @@ setuptools.setup(
         optional=[
         ],
         develop=[
-            # "sphinx",
-            # "sphinx-click",
-            # "sphinx_rtd_theme",
-            # "pytest",
-            # "pytest-cov==2.5.0",
         ]
     ),
     description=(
