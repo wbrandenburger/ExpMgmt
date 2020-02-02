@@ -81,7 +81,7 @@ class MultiCommand(click.MultiCommand):
             script = self.scripts[name]
         except KeyError:            
             colorama.init() # general: colorama has to be activated 
-            self.logger.error( # @log
+            self.logger.error( 
                 "{c.Fore.RED}{c.Style.BRIGHT}{c.Back.BLACK}"
                 "Did you mean {0}?"
                 "{c.Style.RESET_ALL}"
@@ -91,7 +91,7 @@ class MultiCommand(click.MultiCommand):
                     ),
                     c=colorama
                 )
-            )
+            ) # @log
             return None
         if script['plugin']:
             return script['plugin']
@@ -106,7 +106,9 @@ class MultiCommand(click.MultiCommand):
     "-h",
     "--help" 
 )
-@click.version_option(version=expmgmt.__version__)
+@click.version_option(
+    version=expmgmt.__version__
+)
 @click.option(
     "-p",
     "--project",

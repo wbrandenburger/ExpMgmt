@@ -11,7 +11,7 @@ import glob
 import logging
 import os
 import re
-from stevedore import extension
+import stevedore
 
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -25,7 +25,7 @@ def _create_commands_mgr():
     if commands_mgr is not None:
         return
 
-    commands_mgr = extension.ExtensionManager(
+    commands_mgr = stevedore.extension.ExtensionManager(
         namespace='expmgmt.command',
         invoke_on_load=False,
         verify_requirements=True,
