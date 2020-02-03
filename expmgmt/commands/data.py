@@ -18,12 +18,13 @@ logger = logging.getLogger('list')
 # ---------------------------------------------------------------------------
 def run(
         dataset,
-        setting=""
+        setting
     ):
     """Main method to the list command
     """
     
-    logger.debug("Create setting '{0}' from dataset'{1}'".format(setting, dataset))
+    log_setting  = setting if setting else "default" 
+    logger.debug("Create setting '{0}' from dataset '{1}'".format(log_setting, dataset))
 
     if dataset in expmgmt.config.settings.get_datasets():
         expmgmt.config.settings.set_dataset(

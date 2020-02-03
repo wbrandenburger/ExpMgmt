@@ -431,7 +431,6 @@ def get_dataset_meta_settings(dataset, setting):
 def set_dataset(
         dataset,
         predefined = "",
-        fullpath=True,
         sort=True
     ):
     dataset_obj = get_dataset_setting(dataset)
@@ -454,27 +453,31 @@ def set_dataset(
                     data[setting_type] = get_data(os.path.join(get_dataset_settings_dir(dataset),"default-{0}.txt".format(setting_type)))
 
                 if not setting_type in data.keys():
-                    data_tensor = get_data_tensor(setting_type_obj, fullpath=fullpath,sort=sort)
-                    data[setting_type] = data_tensor
-                    # @todo[change]: if not "default" raise error?
+                    data[setting_type] = get_data_tensor(setting_type_obj, sort=sort)
+                    with open(path, "w+") as f:
+                        for line in data[setting_type]:
+                            f.write(" ".join("{}".format(x) for x in line)+"\n")
                 else:
-                    data_tensor = data[setting_type]
+                    data_tensor = data[setting_type].copy()
                     for item in setting_type_obj:
-                        task_func = getattr(expmgmt.data.data, item["func"])
-                        data_tensor = task_func(data_tensor, *item["parameter"])
+                            task_func = getattr(expmgmt.data.data, item["func"])
+                            data_tensor = task_func(data_tensor, *item["parameter"])
 
-                with open(path, "w+") as f:
-                    for line in data_tensor:
-                        f.write(" ".join("{}".format(x) for x in line)+"\n")
+                    with open(path, "w+") as f:
+                        for line in data_tensor:
+                            f.write(" ".join("{}".format(x) for x in line)+"\n")
     return  
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_file_list(path, fullpath=True, sort=True):
-    file_list = sorted(os.listdir(path)) if sort else os.listdir(path)
-    file_list = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+def get_file_list(path, sort=True):
+    path = path if isinstance(path, list) else [path]
 
-    return  [os.path.join(path,f) for f in file_list] if fullpath else  file_list
+    file_list = list()
+    for item in path:   
+        file_list.extend([os.path.join(item, f) for f in os.listdir(item) if os.path.isfile(os.path.join(item, f))])
+        
+    return file_list
     
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -485,10 +488,10 @@ def get_pattern_list(path, regex, group, sort=True):
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_pattern_list_related_to_regex_list(path, regex, group, regex_list, fullpath=False, sort=True):
+def get_pattern_list_related_to_regex_list(path, regex, group, regex_list, sort=True):
     import re
     
-    file_list = get_file_list(path, fullpath=fullpath, sort=sort)
+    file_list = get_file_list(path, sort=sort)
 
     result_file_list = [None]*(len(file_list))
     for c_regex, item in enumerate(regex_list):
@@ -503,7 +506,7 @@ def get_pattern_list_related_to_regex_list(path, regex, group, regex_list, fullp
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_data_tensor(object, fullpath=False, sort=True):
+def get_data_tensor(object, sort=True):
     
     if isinstance(object, list) and len(object)>0:
         obj_iter = iter(object)
@@ -511,7 +514,7 @@ def get_data_tensor(object, fullpath=False, sort=True):
 
         lists = list()
         metadata = dict
-        lists.append(get_file_list(obj_item["dir"], fullpath=fullpath, sort=sort))
+        lists.append(get_file_list(obj_item["dir"], sort=sort))
 
         regex_list = get_pattern_list(obj_item["dir"], obj_item["regex"],obj_item["group"], sort=sort)
 
@@ -521,7 +524,7 @@ def get_data_tensor(object, fullpath=False, sort=True):
             except StopIteration:
                 # if StopIteration is raised, break from loop
                 break
-            lists.append(get_pattern_list_related_to_regex_list(obj_item["dir"], obj_item["regex"], obj_item["group"], regex_list, fullpath=fullpath, sort=sort))
+            lists.append(get_pattern_list_related_to_regex_list(obj_item["dir"], obj_item["regex"], obj_item["group"], regex_list, sort=sort))
 
     
     return [data_tuple for data_tuple in zip(*lists)]
