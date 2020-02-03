@@ -5,6 +5,7 @@
 #   import ------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 import expmgmt.config.settings
+import expmgmt.config.config
 
 import click
 import logging
@@ -16,14 +17,18 @@ logger = logging.getLogger('list')
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def run(
-        dataset = "none"
+        dataset,
+        setting=""
     ):
     """Main method to the list command
     """
     
+    logger.debug("Create setting '{0}' from dataset'{1}'".format(setting, dataset))
+
     if dataset in expmgmt.config.settings.get_datasets():
         expmgmt.config.settings.set_dataset(
-            dataset=dataset
+            dataset=dataset,
+            predefined=setting
         )
 
 #   function ----------------------------------------------------------------
@@ -36,17 +41,40 @@ def run(
     "--help" 
 )
 @click.option(
-    "-s",
-    "--set_data",
-    help="Set the setting files for the specified datasets",
-    type=click.Choice(["none",*expmgmt.config.settings.get_datasets()]),
-    default="none"
+    "-d",
+    "--data",
+    help="Pass the trainings, test and validation of the specified dataset setting",
+    nargs=2, 
+    type=(
+        click.Choice(["default",*expmgmt.config.settings.get_datasets()]), str
+    ),
+    default=("default","default")
 )
 def cli(
-        set_data,
+        data
     ):
     """List experiments' properties"""
 
+    if data[0] == "default":
+        data_setting = (
+            expmgmt.config.config.get
+            (expmgmt.config.settings._DEFAULT_DATASET),
+            expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
+        )
+    else:
+        data_setting = data
+        
+        if not data_setting[1] in expmgmt.config.settings.get_dataset_settings(data_setting[0]):
+            raise ValueError("Error: Invalid value for '-d' / '--data': invalid choice: {0}. (choose from {1})".format(
+                data_setting[1], 
+                expmgmt.config.settings.get_dataset_settings(data_setting[0])
+                )
+            ) # @todo[generalize]: also in expmgmt
+
+    if data[1] == "default":
+        data_setting = (data_setting[0], "")
+
     run(
-        dataset = set_data
+        data_setting[0],
+        data_setting[1]
     )

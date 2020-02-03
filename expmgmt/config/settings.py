@@ -327,6 +327,13 @@ def get_experiment_settings(
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
+def get_data(path):
+    #print(path)
+    with open(path) as f:
+        return [line.split() for line in f]
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def get_dataset(dataset):
 
     from configparser import ConfigParser, ExtendedInterpolation
@@ -423,27 +430,40 @@ def get_dataset_meta_settings(dataset, setting):
 # ---------------------------------------------------------------------------
 def set_dataset(
         dataset,
+        predefined = "",
         fullpath=True,
         sort=True
     ):
     dataset_obj = get_dataset_setting(dataset)
 
     data = dict()
-    for setting in dataset_obj.keys():
+    dataset_settings = dataset_obj.keys()
+    if predefined:
+        dataset_settings = [predefined]
+    for setting in dataset_settings:
         setting_obj = dataset_obj[setting]
+        
         for setting_type in setting_obj.keys():
+
             setting_type_obj = setting_obj[setting_type]
             if setting_type == "meta":
                 x=1 # @todo[change]:  
-            else:
+            else: 
+                path = os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type))
+                if predefined and (not setting_type in data.keys()):
+                    data[setting_type] = get_data(os.path.join(get_dataset_settings_dir(dataset),"default-{0}.txt".format(setting_type)))
+
                 if not setting_type in data.keys():
                     data_tensor = get_data_tensor(setting_type_obj, fullpath=fullpath,sort=sort)
                     data[setting_type] = data_tensor
                     # @todo[change]: if not "default" raise error?
                 else:
-                    task_func = getattr(expmgmt.data.data, setting_type_obj["func"])
-                    data_tensor = task_func(data[setting_type], *setting_type_obj["parameter"])
-                with open(os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type)),"w+") as f:
+                    data_tensor = data[setting_type]
+                    for item in setting_type_obj:
+                        task_func = getattr(expmgmt.data.data, item["func"])
+                        data_tensor = task_func(data_tensor, *item["parameter"])
+
+                with open(path, "w+") as f:
                     for line in data_tensor:
                         f.write(" ".join("{}".format(x) for x in line)+"\n")
     return  
@@ -473,6 +493,7 @@ def get_pattern_list_related_to_regex_list(path, regex, group, regex_list, fullp
     result_file_list = [None]*(len(file_list))
     for c_regex, item in enumerate(regex_list):
         pattern = re.compile(regex.replace("%(ref)s",item))
+        # logger.debug("Search for pattern {0} '{1}' in folder '{2}'".format(regex.replace("%(ref)s",item),item, path)) # @log
         for c_files, f in enumerate(file_list):
             result_search = pattern.search(f)
             if result_search:
