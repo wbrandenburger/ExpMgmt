@@ -423,8 +423,9 @@ def get_dataset_settings_dir(dataset):
 def get_dataset_meta_settings(dataset, setting):
     if not _DATASET:
         set_dataset_config()
-
-    return get_dataset_setting(dataset)[setting]["meta"]
+    meta_settings = get_dataset_setting(dataset)["default"]["meta"]
+    meta_settings.update(get_dataset_setting(dataset)[setting]["meta"])
+    return meta_settings
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
