@@ -69,23 +69,18 @@ def run(
         experiment=expmgmt.config.settings._DEFAULT_EXP_NAME,
         data_setting = ()
     ):
-    
-    path = expmgmt.config.config.get(
-        expmgmt.config.settings._MAIN_PROJ_FILE, required=False
-    )
-
-    if not os.path.exists(path):
-        logger.warning("Running main experiment file: File {0} does not exist.".format(path)) # @log
-        return
 
     # get temporary file with user defined settings
     tmp_settings_path = pass_settings(experiment, data_setting)
-    
-    cmd_args = [
-        "python", 
-        path,
-        tmp_settings_path
-    ]
+
+    path = expmgmt.config.config.get(
+        expmgmt.config.settings._MAIN_PROJ_FILE, required=False
+    )
+    if not os.path.exists(path):
+        logger.warning("Running main experiment file: File {0} does not exist.".format(path)) # @log
+        cmd_args = [path, "run", tmp_settings_path]
+    else:
+        cmd_args = ["python", path, tmp_settings_path]
 
     if arguments:
         cmd_args.append(" ".join(arguments))
