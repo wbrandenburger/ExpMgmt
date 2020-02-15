@@ -32,11 +32,11 @@ setuptools.setup(
     url="https://github.com/wbrandenburger/ExpMgmt",
     install_requires=[
         # - python project packages - 
-        "colorama>=0.4",
-        "click>=7.0.0",
-        "stevedore>=1.30",
-        "configparser>=3.0.0",
-        "PyYAML>=3.12",
+        # "colorama>=0.4",
+        # "click>=7.0.0",
+        # "stevedore>=1.30",
+        # "configparser>=3.0.0",
+        # "PyYAML>=3.12",
     ],
     python_requires=">=3",
     classifiers=[
