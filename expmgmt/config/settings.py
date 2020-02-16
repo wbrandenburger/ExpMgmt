@@ -495,17 +495,17 @@ def get_pattern_list_related_to_regex_list(path, regex, group, regex_list, sort=
     
     file_list = get_file_list(path, sort=sort)
 
-    result_file_list = [None]*(len(file_list))
+    result_file_list = [None]*(len(regex_list))
     for c_regex, item in enumerate(regex_list):
         pattern = re.compile(regex.replace("%(ref)s",item))
         # logger.debug("Search for pattern {0} '{1}' in folder '{2}'".format(regex.replace("%(ref)s",item),item, path)) # @log
         for c_files, f in enumerate(file_list):
             result_search = pattern.search(f)
+            
             if result_search:
                 result_file_list[c_regex] = file_list[c_files]
 
-    return result_file_list
-
+    return result_file_list        
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_data_tensor(object, sort=True):
