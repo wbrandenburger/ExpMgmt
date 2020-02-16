@@ -49,6 +49,8 @@ _DEFAULT_DATASET = "default-dataset"
 _DEFAULT_SETTING = "default-setting"
 _META_DATA = ["type"]
 
+_settings_default = None
+
 logger = logging.getLogger("config")
 
 #   lambda's ----------------------------------------------------------------
