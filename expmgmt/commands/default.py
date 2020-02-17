@@ -145,7 +145,4 @@ def run(
     logger.debug("Plattform '{0}' detected.".format(sys.platform)) # @log
 
     # set the specified project
-    os.environ["EXPMGMT_PROJECT"] = project
-    expmgmt.config.experiment.get_exp()
-    print("blubb")
     expmgmt.config.experiment.set_exp_from_name(project)
