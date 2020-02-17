@@ -118,7 +118,7 @@ def run(
     help="Pass the trainings, test and validation of the specified dataset setting",
     nargs=2, 
     type=(
-        click.Choice(["default",*expmgmt.config.settings.get_datasets()]), str
+        click.Choice([*expmgmt.config.settings.get_datasets()]), str
     ),
     default=("default","")
 )
