@@ -106,22 +106,18 @@ def run(
     nargs=-1
 )
 @click.option(
-    "-e",
-    "--experiment",
-    help="Pass the settings of the current experiment defined in {0}".format(expmgmt.config.settings._ENV_PROJECT),
-    type=click.Choice([*expmgmt.config.settings.get_experiments_name()]),
-    default=expmgmt.config.settings._DEFAULT_EXP_NAME
-)
-@click.option(
     "-d",
     "--data_set",
     help="Pass the trainings, test and validation of the specified dataset setting",
-    nargs=2, 
-    type=(
-        click.Choice([expmgmt.config.settings._DEFAULT_EXP_NAME, *expmgmt.config.settings.get_datasets()]), 
-        str
-    ),
-    default=("default","")
+    type=click.Choice(["default",*expmgmt.config.settings.get_datasets()]),
+    default="default"
+)
+@click.option(
+    "-s",
+    "--setting",
+    help="Pass the trainings, test and validation of the specified dataset setting",
+    type=str,
+    default="default"
 )
 @click.option(
     "--nodata",
@@ -133,32 +129,31 @@ def cli(
         arguments,
         experiment,
         data_set,
+        setting,
         nodata
     ):
     """Run an arbitrary shell command in the library folder"""
 
 
     if not nodata:
-        if data_set[0] == "default":
-            data_setting = (
-                expmgmt.config.config.get
-                (expmgmt.config.settings._DEFAULT_DATASET),
-                expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
-            )
-        elif not data_set[0] == "none":
-            data_setting = data_set
-            
-            if not data_setting[1] in expmgmt.config.settings.get_dataset_settings(data_setting[0]):
+        if data_set == "default":
+            run_data_set = expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_DATASET)
+            run_setting =  expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
+        elif not data_set == "none":
+            run_data_set = data_set
+            run_setting = setting
+            if not setting in expmgmt.config.settings.get_dataset_settings(run_data_set):
                 raise ValueError("Error: Invalid value for '-d' / '--data_set': invalid choice: {0}. (choose from {1})".format(
-                    data_setting[1], 
-                    expmgmt.config.settings.get_dataset_settings(data_setting[0])
+                    setting, 
+                    expmgmt.config.settings.get_dataset_settings(run_data_set)
                     )
                 ) # @todo[generalize]: also in expmgmt
     else:
-        data_setting = ()
+        run_data_set = None
+        run_setting = None
 
     run(
         arguments=arguments,
         experiment=experiment,
-        data_setting = data_setting
+        data_setting = (run_data_set, run_setting)
     )

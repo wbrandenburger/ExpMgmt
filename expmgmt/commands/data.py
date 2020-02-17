@@ -43,39 +43,42 @@ def run(
 )
 @click.option(
     "-d",
-    "--data",
+    "--data_set",
     help="Pass the trainings, test and validation of the specified dataset setting",
-    nargs=2, 
-    type=(
-        click.Choice(["default",*expmgmt.config.settings.get_datasets()]), str
-    ),
-    default=("default","default")
+    type=click.Choice(["default",*expmgmt.config.settings.get_datasets()]),
+    default="default"
+)
+@click.option(
+    "-s",
+    "--setting",
+    help="Pass the trainings, test and validation of the specified dataset setting",
+    type=str,
+    default="default"
 )
 def cli(
-        data
+        data_set,
+        setting
     ):
     """List experiments' properties"""
 
-    if data[0] == "default":
-        data_setting = (
-            expmgmt.config.config.get
-            (expmgmt.config.settings._DEFAULT_DATASET),
-            expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
-        )
-    else:
-        data_setting = data
-        
-        if not data_setting[1] in expmgmt.config.settings.get_dataset_settings(data_setting[0]):
-            raise ValueError("Error: Invalid value for '-d' / '--data': invalid choice: {0}. (choose from {1})".format(
-                data_setting[1], 
-                expmgmt.config.settings.get_dataset_settings(data_setting[0])
+    if data_set == "default":
+        run_data_set = expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_DATASET)
+        run_setting =  expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
+    elif not data_set == "none":
+        run_data_set = data_set
+        run_setting = setting
+        if not setting in expmgmt.config.settings.get_dataset_settings(run_data_set):
+            raise ValueError("Error: Invalid value for '-d' / '--data_set': invalid choice: {0}. (choose from {1})".format(
+                setting, 
+                expmgmt.config.settings.get_dataset_settings(run_data_set)
                 )
             ) # @todo[generalize]: also in expmgmt
 
-    if data[1] == "default":
-        data_setting = (data_setting[0], "")
+    if setting == "default":
+        run_data_set = data_set
+        run_setting = setting
 
     run(
-        data_setting[0],
-        data_setting[1]
+        run_data_set,
+        run_setting
     )
