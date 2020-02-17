@@ -112,7 +112,7 @@ def run(
     "--experiment",
     help="Experiment",
     #type=click.Choice([*expmgmt.config.settings.get_experiments_name()]),
-    type=str
+    type=str,
     default=expmgmt.config.settings._DEFAULT_EXP_NAME
 )
 @click.option(
