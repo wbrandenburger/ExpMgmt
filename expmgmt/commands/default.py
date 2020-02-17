@@ -86,7 +86,7 @@ class MultiCommand(click.MultiCommand):
     "--project",
     help="Set the current project.",
     type=click.Choice([*expmgmt.config.settings.get_projects_name()]),
-    default=lambda: expmgmt.config.settings._DEFAULT_EXP_NAME if not os.environ.get(expmgmt.config.settings._ENV_PROJECT) else os.environ.get(expmgmt.config.settings._ENV_PROJECT)
+    default=expmgmt.config.config.get("default-proj")
 )
 @click.option(
     "-v",
@@ -143,6 +143,5 @@ def run(
     
     logger = logging.getLogger('default')
     logger.debug("Plattform '{0}' detected.".format(sys.platform)) # @log
-
-    # set the specified project
-    expmgmt.config.experiment.set_exp_from_name(project)
+    print("HUUTUSAR")
+    expmgmt.config.settings.set_project(project)

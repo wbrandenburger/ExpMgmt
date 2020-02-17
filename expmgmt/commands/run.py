@@ -28,7 +28,8 @@ logger = logging.getLogger('run')
 # ---------------------------------------------------------------------------
 def pass_settings(
         experiment,
-        data_setting = ()
+        data_set = None,
+        setting = None
     ):
 
     # create a temporary file
@@ -44,15 +45,15 @@ def pass_settings(
         experiment=experiment
     )
 
-    if not data_setting == ():
+    if data_set and setting :
         experiment_setting.update(
             expmgmt.config.settings.get_dataset_setting_files(
-                *data_setting
+                data_set, setting
             )
         )
         experiment_setting.update(
             expmgmt.config.settings.get_dataset_meta_settings(
-                *data_setting
+                data_set, setting
             )
         )
 
@@ -67,11 +68,12 @@ def pass_settings(
 def run(
         arguments=[],
         experiment=expmgmt.config.settings._DEFAULT_EXP_NAME,
-        data_setting = ()
+        data_set = None,
+        setting = None
     ):
 
     # get temporary file with user defined settings
-    tmp_settings_path = pass_settings(experiment, data_setting)
+    tmp_settings_path = pass_settings(experiment, data_set, setting)
 
     path = expmgmt.config.config.get(
         expmgmt.config.settings._MAIN_PROJ_FILE, required=False
@@ -108,14 +110,16 @@ def run(
 @click.option(
     "-e",
     "--experiment",
-    type=str
+    help="Experiment",
+    type=click.Choice([*expmgmt.config.settings.get_experiments_name()]),
+    default=expmgmt.config.settings._DEFAULT_EXP_NAME
 )
 @click.option(
     "-d",
     "--data_set",
     help="Pass the trainings, test and validation of the specified dataset setting",
-    type=click.Choice(["default",*expmgmt.config.settings.get_datasets()]),
-    default="default"
+    type=click.Choice([expmgmt.config.settings._DEFAULT_SET_NAME,*expmgmt.config.settings.get_datasets()]),
+    default=expmgmt.config.settings._DEFAULT_SET_NAME
 )
 @click.option(
     "-s",
@@ -139,7 +143,6 @@ def cli(
     ):
     """Run an arbitrary shell command in the library folder"""
 
-
     if not nodata:
         if data_set == "default":
             run_data_set = expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_DATASET)
@@ -160,5 +163,6 @@ def cli(
     run(
         arguments=arguments,
         experiment=experiment,
-        data_setting = (run_data_set, run_setting)
+        data_set = run_data_set, 
+        setting = run_setting
     )

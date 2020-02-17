@@ -120,21 +120,13 @@ def get_exp():
     :rtype:  expmgmt.experiment.Experiment
     """
 
-    global _CURRENT_EXPERIMENT
+    #global _CURRENT_EXPERIMENT
+    #if _CURRENT_EXPERIMENT is None:
+    set_exp_from_name(expmgmt.config.settings._PROJECT) 
     if _CURRENT_EXPERIMENT is None:
-        if os.environ.get(expmgmt.config.settings._ENV_PROJECT):
-            logger.debug("Environment variable '{0}' found with value '{1}'".format(
-                expmgmt.config.settings._ENV_PROJECT,
-                os.environ.get(expmgmt.config.settings._ENV_PROJECT)
-                ) 
-            ) # @log
-            set_exp_from_name(
-                os.environ[expmgmt.config.settings._ENV_PROJECT]
-            ) 
-        if _CURRENT_EXPERIMENT is None:
-            # Do not put expmgmt.config.config.get because get is a special function that also needs the experiment to see if some key was overridden!
-            exp = expmgmt.config.settings.get_settings_default(key=expmgmt.config.settings._DEFAULT_PROJ)
-            set_exp_from_name(exp)
+        # Do not put expmgmt.config.config.get because get is a special function that also needs the experiment to see if some key was overridden!
+        exp = expmgmt.config.settings.get_settings_default(key=expmgmt.config.settings._DEFAULT_PROJ)
+        set_exp_from_name(exp)
 
     assert(isinstance(_CURRENT_EXPERIMENT, expmgmt.utils.experiment.Experiment))
     return _CURRENT_EXPERIMENT

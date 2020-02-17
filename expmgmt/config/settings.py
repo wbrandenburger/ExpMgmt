@@ -20,9 +20,18 @@ from pathlib import Path # @todo[to change]: https://medium.com/@ageitgey/python
 
 #   settings ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
+_PROJECT = "project"
+
+#   function ----------------------------------------------------------------
+# ---------------------------------------------------------------------------
+def set_project(project):
+    global _PROJECT
+    _PROJECT = project
+
 _GENERAL_SETTINGS_NAME = "settings"
 _DEFAULT_PROJ_NAME = "project"
 _DEFAULT_EXP_NAME = "default"
+_DEFAULT_SET_NAME = "default"
 
 _ENV_PROJECT = "EXPMGMT_PROJECT"
 
@@ -301,7 +310,7 @@ def get_projects_name():
 # ---------------------------------------------------------------------------
 def get_experiments_name():
     exp_settings = get_settings(expmgmt.config.config.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP))
-    
+    print(exp_settings)
     if exp_settings is None:
         return [_DEFAULT_EXP_NAME]
     else:
