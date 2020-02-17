@@ -106,6 +106,11 @@ def run(
     nargs=-1
 )
 @click.option(
+    "-e",
+    "--experiment",
+    type=str
+)
+@click.option(
     "-d",
     "--data_set",
     help="Pass the trainings, test and validation of the specified dataset setting",
