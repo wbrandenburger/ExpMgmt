@@ -310,6 +310,7 @@ def get_projects_name():
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_experiments_name():
+    print(expmgmt.config.config.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP))
     exp_settings = get_settings(expmgmt.config.config.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP))
     print(exp_settings)
     if exp_settings is None:
