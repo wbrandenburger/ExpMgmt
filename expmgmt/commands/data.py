@@ -76,7 +76,7 @@ def cli(
 
     if setting == "default":
         run_data_set = data_set
-        run_setting = setting
+        run_setting = ""
 
     run(
         run_data_set,
