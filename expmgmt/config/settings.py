@@ -489,7 +489,8 @@ def get_file_list(path, ext, sort=True):
     path = path if isinstance(path, list) else [path]
 
     file_list = list()
-    for item in path:   
+    for item in path:
+        print(item)
         for f in os.listdir(item):
             full_path = os.path.join(item, f)
             if os.path.isfile(full_path) and full_path.endswith(ext):
@@ -528,10 +529,9 @@ def get_data_tensor(object, sort=True):
         obj_item = next(obj_iter)
 
         lists = list()
-        metadata = dict
+        metadata = dict()
         lists.append(get_file_list(obj_item["dir"], obj_item["ext"], sort=sort))
         
-        print(obj_item["regex"], obj_item["group"])
         re_search = expmgmt.utils.regex.ReSearch(obj_item["regex"], obj_item["group"])
         regex_list = get_pattern_list(obj_item["dir"], obj_item["ext"], re_search, sort=sort)
 
