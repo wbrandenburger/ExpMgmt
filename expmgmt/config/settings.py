@@ -503,16 +503,15 @@ def get_pattern_list(path, ext, regex, sort=True):
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_pattern_list_related_to_regex_list(path, ext, regex, regex_list, sort=True):
+def get_pattern_list_related_to_regex_list(path, ext, regex, group, regex_list, sort=True):
     import re
     file_list = get_file_list(path, ext, sort=sort)
 
     result_file_list = [None]*(len(regex_list))
     for c_regex, item in enumerate(regex_list):
-        pattern = re.compile(re.replace("%(ref)s",item))
-        # logger.debug("Search for pattern {0} '{1}' in folder '{2}'".format(regex.replace("%(ref)s",item),item, path)) # @log
+        re_search = expmgmt.utils.regex.ReSearch(regex.replace("%(ref)s",item), group)
         for c_files, f in enumerate(file_list):
-            if regex(f):
+            if re_search(f):
                 result_file_list[c_regex] = file_list[c_files]
 
     return result_file_list        
@@ -537,8 +536,7 @@ def get_data_tensor(object, sort=True):
             except StopIteration:
                 # if StopIteration is raised, break from loop
                 break
-            re_search = expmgmt.utils.regex.ReSearch(obj_item["regex"], obj_item["group"])
-            lists.append(get_pattern_list_related_to_regex_list(obj_item["dir"], obj_item["ext"], re_search, regex_list, sort=sort))
+            lists.append(get_pattern_list_related_to_regex_list(obj_item["dir"], obj_item["ext"], obj_item["regex"], obj_item["group"], regex_list, sort=sort))
 
     
     return [data_tuple for data_tuple in zip(*lists)]
