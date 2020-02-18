@@ -531,7 +531,7 @@ def get_data_tensor(object, sort=True):
                 break
                 
             file_list = get_file_list(obj_item["dir"], obj_item["ext"], sort=sort)
-            lists.append(get_pattern_list_related_to_regex_list(obj_item["regex"], obj_item["group"], regex_list, sort=sort))
+            lists.append(get_pattern_list_related_to_regex_list(obj_item["regex"], obj_item["group"], regex_list, file_list))
 
     
     return [data_tuple for data_tuple in zip(*lists)]
