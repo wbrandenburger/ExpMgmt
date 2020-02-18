@@ -496,7 +496,7 @@ def get_file_list(path, ext, sort=True):
                 file_list.extend(full_path)
 
         # file_list.extend([os.path.join(item, f) for f in os.listdir(item) if os.path.isfile(os.path.join(item, f))])
-        
+    print(file_list)
     return file_list
     
 #   function ----------------------------------------------------------------
