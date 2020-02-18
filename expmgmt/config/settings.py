@@ -506,7 +506,7 @@ def get_pattern_list(path, ext, regex, sort=True):
 def get_pattern_list_related_to_regex_list(path, ext, regex, group, regex_list, sort=True):
     import re
     file_list = get_file_list(path, ext, sort=sort)
-
+    print(file_list)
     result_file_list = [None]*(len(regex_list))
     for c_regex, item in enumerate(regex_list):
         print(regex.replace("%(ref)s",item), group)
