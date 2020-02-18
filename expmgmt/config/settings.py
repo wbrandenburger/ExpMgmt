@@ -497,6 +497,8 @@ def get_file_list(path, sort=True):
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_pattern_list(path, regex, sort=True):
+    for f in get_file_list(path,sort=sort):
+        print(regex(f))
     return [regex(f) for f in get_file_list(path,sort=sort)]
 
 #   function ----------------------------------------------------------------
@@ -525,7 +527,8 @@ def get_data_tensor(object, sort=True):
         lists = list()
         metadata = dict
         lists.append(get_file_list(obj_item["dir"], sort=sort))
-            
+        
+        print(obj_item["regex"], obj_item["group"])
         re_search = expmgmt.utils.regex.ReSearch(obj_item["regex"], obj_item["group"])
         regex_list = get_pattern_list(obj_item["dir"], re_search, sort=sort)
 
