@@ -492,7 +492,7 @@ def get_file_list(path, ext, sort=True):
     for item in path:   
         for f in os.listdir(item):
             full_path = os.path.join(item, f)
-            if os.path.isfile(full_path) and full_path.endswith(".txt"):
+            if os.path.isfile(full_path) and full_path.endswith(ext):
                 file_list.extend(full_path)
 
         # file_list.extend([os.path.join(item, f) for f in os.listdir(item) if os.path.isfile(os.path.join(item, f))])
