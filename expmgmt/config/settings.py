@@ -494,7 +494,6 @@ def get_file_list(path, ext, sort=True):
             full_path = os.path.join(item, f)
             if os.path.isfile(full_path) and full_path.endswith(ext):
                 file_list.append(full_path)
-    print(file_list)
     return file_list
     
 #   function ----------------------------------------------------------------
@@ -510,6 +509,7 @@ def get_pattern_list_related_to_regex_list(path, ext, regex, group, regex_list, 
 
     result_file_list = [None]*(len(regex_list))
     for c_regex, item in enumerate(regex_list):
+        print(regex.replace("%(ref)s",item), group)
         re_search = expmgmt.utils.regex.ReSearch(regex.replace("%(ref)s",item), group)
         for c_files, f in enumerate(file_list):
             if re_search(f):
