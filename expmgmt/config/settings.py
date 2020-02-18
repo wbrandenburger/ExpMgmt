@@ -495,21 +495,12 @@ def get_file_list(path, ext, sort=True):
             if os.path.isfile(full_path) and full_path.endswith(ext):
                 file_list.append(full_path)
     return file_list
-    
-#   function ----------------------------------------------------------------
-# ---------------------------------------------------------------------------
-def get_pattern_list(path, ext, regex, sort=True):
-    return [regex(f) for f in get_file_list(path, ext, sort=sort)]
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_pattern_list_related_to_regex_list(path, ext, regex, group, regex_list, sort=True):
-    import re
-    file_list = get_file_list(path, ext, sort=sort)
-    print(file_list)
+def get_pattern_list_related_to_regex_list(regex, group, regex_list, file_list):
     result_file_list = [None]*(len(regex_list))
     for c_regex, item in enumerate(regex_list):
-        print(regex.replace("%(ref)s",item), group)
         re_search = expmgmt.utils.regex.ReSearch(regex.replace("%(ref)s",item), group)
         for c_files, f in enumerate(file_list):
             if re_search(f):
@@ -528,16 +519,19 @@ def get_data_tensor(object, sort=True):
         metadata = dict()
         lists.append(get_file_list(obj_item["dir"], obj_item["ext"], sort=sort))
         
+        file_list = get_file_list(obj_item["dir"], obj_item["ext"], sort=sort)
         re_search = expmgmt.utils.regex.ReSearch(obj_item["regex"], obj_item["group"])
-        regex_list = get_pattern_list(obj_item["dir"], obj_item["ext"], re_search, sort=sort)
-
+        regex_list = [re_search(f) for f in file_list]
+        
         while True:
             try:
                 obj_item = next(obj_iter)
             except StopIteration:
                 # if StopIteration is raised, break from loop
                 break
-            lists.append(get_pattern_list_related_to_regex_list(obj_item["dir"], obj_item["ext"], obj_item["regex"], obj_item["group"], regex_list, sort=sort))
+                
+            file_list = get_file_list(obj_item["dir"], obj_item["ext"], sort=sort)
+            lists.append(get_pattern_list_related_to_regex_list(obj_item["regex"], obj_item["group"], regex_list, sort=sort))
 
     
     return [data_tuple for data_tuple in zip(*lists)]
