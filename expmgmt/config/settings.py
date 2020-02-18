@@ -490,14 +490,10 @@ def get_file_list(path, ext, sort=True):
 
     file_list = list()
     for item in path:
-        print(item)
         for f in os.listdir(item):
             full_path = os.path.join(item, f)
             if os.path.isfile(full_path) and full_path.endswith(ext):
-                file_list.extend(full_path)
-
-        # file_list.extend([os.path.join(item, f) for f in os.listdir(item) if os.path.isfile(os.path.join(item, f))])
-    print(file_list)
+                file_list.append(full_path)
     return file_list
     
 #   function ----------------------------------------------------------------
