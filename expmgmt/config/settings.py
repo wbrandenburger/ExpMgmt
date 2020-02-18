@@ -9,6 +9,7 @@ import expmgmt.config.experiment
 import expmgmt.utils.yaml
 import expmgmt.utils.structures
 import expmgmt.data.data
+import expmgmt.utils.regex
 
 from collections import OrderedDict
 import logging
