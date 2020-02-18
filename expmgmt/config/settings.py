@@ -509,7 +509,7 @@ def get_pattern_list_related_to_regex_list(path, ext, regex, regex_list, sort=Tr
 
     result_file_list = [None]*(len(regex_list))
     for c_regex, item in enumerate(regex_list):
-        pattern = re.compile(regex.replace("%(ref)s",item))
+        pattern = re.compile(re.replace("%(ref)s",item))
         # logger.debug("Search for pattern {0} '{1}' in folder '{2}'".format(regex.replace("%(ref)s",item),item, path)) # @log
         for c_files, f in enumerate(file_list):
             if regex(f):
