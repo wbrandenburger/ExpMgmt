@@ -502,6 +502,7 @@ def get_pattern_list(path, regex, sort=True):
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_pattern_list_related_to_regex_list(path, regex, regex_list, sort=True):
+    import re
     file_list = get_file_list(path, sort=sort)
 
     result_file_list = [None]*(len(regex_list))
