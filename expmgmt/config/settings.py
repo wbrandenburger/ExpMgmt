@@ -494,6 +494,7 @@ def get_file_list(path, ext, sort=True):
             full_path = os.path.join(item, f)
             if os.path.isfile(full_path) and full_path.endswith(ext):
                 file_list.append(full_path)
+    print(file_list)
     return file_list
     
 #   function ----------------------------------------------------------------
