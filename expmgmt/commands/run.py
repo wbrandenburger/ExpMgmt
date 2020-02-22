@@ -45,8 +45,7 @@ def pass_settings(
     experiment_setting =  expmgmt.config.settings.get_experiment_settings(
         experiment=experiment
     )
-    print(experiment_setting)
-    print(data_set)
+
     if  data_set == expmgmt.config.settings._DEFAULT_NAME:
         try:
             data_set = experiment_setting["data"]["data-set"]
@@ -60,8 +59,6 @@ def pass_settings(
                 data_set, setting
             )
         )
-        print("huhu")
-        print(experiment_setting)
         experiment_setting.update(
             expmgmt.config.settings.get_dataset_meta_settings(
                 data_set, setting
