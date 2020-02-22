@@ -8,6 +8,7 @@ import expmgmt.config.config
 import expmgmt.config.settings
 import expmgmt.config.experiment
 import expmgmt.utils.yaml
+import expmgmt.debug.exceptions
 
 import click
 import logging
@@ -29,7 +30,7 @@ logger = logging.getLogger('run')
 def pass_settings(
         experiment,
         data_set = None,
-        setting = None
+        setting = None,
     ):
 
     # create a temporary file
@@ -45,6 +46,13 @@ def pass_settings(
         experiment=experiment
     )
 
+    if  data_set == expmgmt.config.settings._DEFAULT_NAME:
+        try:
+            data_set = experiment_setting["data"]["data-set"]
+            setting = experiment_setting["data"]["setting"]
+        except KeyError:
+            raise expmgmt.debug.exceptions.KeyErrorJson("data")
+
     if data_set and setting :
         experiment_setting.update(
             expmgmt.config.settings.get_dataset_setting_files(
@@ -57,6 +65,11 @@ def pass_settings(
             )
         )
 
+    try:
+        experiment_setting.pop("data", None)
+    except KeyError:
+        pass
+
     # write user defined settings to tempory file
     logger.info("Write experiment and data settings to file '{0}'".format(tmp_object[1]))
     expmgmt.utils.yaml.data_to_yaml(tmp_object[1], experiment_setting)
@@ -67,7 +80,7 @@ def pass_settings(
 # ---------------------------------------------------------------------------
 def run(
         arguments=[],
-        experiment=expmgmt.config.settings._DEFAULT_EXP_NAME,
+        experiment=expmgmt.config.settings._DEFAULT_NAME,
         data_set = None,
         setting = None
     ):
@@ -111,26 +124,28 @@ def run(
     "-e",
     "--experiment",
     help="Experiment",
-    #type=click.Choice([*expmgmt.config.settings.get_experiments_name()]),
     type=str,
-    default=expmgmt.config.settings._DEFAULT_EXP_NAME
+    default=expmgmt.config.settings._DEFAULT_NAME
 )
 @click.option(
     "-d",
     "--data_set",
     help="Pass the trainings, test and validation of the specified dataset setting",
-    type=click.Choice([expmgmt.config.settings._DEFAULT_SET_NAME,*expmgmt.config.settings.get_datasets()]),
-    default=expmgmt.config.settings._DEFAULT_SET_NAME
+    type=click.Choice([
+        expmgmt.config.settings._DEFAULT_NAME,
+        *expmgmt.config.settings.get_datasets()
+        ]
+    ),
 )
 @click.option(
     "-s",
     "--setting",
     help="Pass the trainings, test and validation of the specified dataset setting",
     type=str,
-    default="default"
+    default=expmgmt.config.settings._DEFAULT_NAME
 )
 @click.option(
-    "--nodata",
+    "--no_data",
     help="Pass no trainings, test and validation data",
     is_flag=True,
     default=False
@@ -140,30 +155,23 @@ def cli(
         experiment,
         data_set,
         setting,
-        nodata
+        no_data
     ):
     """Run an arbitrary shell command in the library folder"""
 
-    if not nodata:
-        if data_set == "default":
-            run_data_set = expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_DATASET)
-            run_setting =  expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
-        elif not data_set == "none":
-            run_data_set = data_set
-            run_setting = setting
-            if not setting in expmgmt.config.settings.get_dataset_settings(run_data_set):
-                raise ValueError("Error: Invalid value for '-d' / '--data_set': invalid choice: {0}. (choose from {1})".format(
-                    setting, 
-                    expmgmt.config.settings.get_dataset_settings(run_data_set)
-                    )
-                ) # @todo[generalize]: also in expmgmt
+    if not data_set:
+        data_set = None
+        setting = None
     else:
-        run_data_set = None
-        run_setting = None
+        if not setting in expmgmt.config.settings.get_dataset_settings(data_set):
+            raise expmgmt.debug.exceptions.ArgumentError(
+                setting, 
+                expmgmt.config.settings.get_dataset_settings(data_set)
+            )
 
     run(
         arguments=arguments,
         experiment=experiment,
-        data_set = run_data_set, 
-        setting = run_setting
+        data_set=data_set, 
+        setting=setting,
     )

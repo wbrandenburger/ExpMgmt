@@ -61,8 +61,8 @@ def run(
     "-e",
     "--experiment",
     help="Show the settings of the current experiment defined in {0}".format(expmgmt.config.settings._ENV_PROJECT),
-    type=click.Choice([expmgmt.config.settings._DEFAULT_EXP_NAME, *expmgmt.config.settings.get_experiments_name()]),
-    default=expmgmt.config.settings._DEFAULT_EXP_NAME
+    type=click.Choice([expmgmt.config.settings._DEFAULT_NAME, *expmgmt.config.settings.get_experiments_name()]),
+    default=expmgmt.config.settings._DEFAULT_NAME
 )
 def cli(
         projects,

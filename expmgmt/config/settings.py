@@ -10,6 +10,7 @@ import expmgmt.utils.yaml
 import expmgmt.utils.structures
 import expmgmt.data.data
 import expmgmt.utils.regex
+import expmgmt.debug.exceptions
 
 from collections import OrderedDict
 import logging
@@ -31,8 +32,7 @@ def set_project(project):
 
 _GENERAL_SETTINGS_NAME = "settings"
 _DEFAULT_PROJ_NAME = "project"
-_DEFAULT_EXP_NAME = "default"
-_DEFAULT_SET_NAME = "default"
+_DEFAULT_NAME = "default"
 
 _ENV_PROJECT = "EXPMGMT_PROJECT"
 
@@ -55,8 +55,6 @@ _OVERRIDE_VARS = {
 }
 
 _DATASET = None
-_DEFAULT_DATASET = "default-dataset"
-_DEFAULT_SETTING = "default-setting"
 _META_DATA = ["type"]
 
 _settings_default = None
@@ -286,7 +284,7 @@ _settings_default = { # default settings
 }
 
 _settings_default_experiment = {
-    "name": _DEFAULT_EXP_NAME
+    "name": _DEFAULT_NAME
 }
 
 #   function ----------------------------------------------------------------
@@ -314,14 +312,14 @@ def get_experiments_name():
     exp_settings = get_settings(expmgmt.config.config.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP))
  
     if exp_settings is None:
-        return [_DEFAULT_EXP_NAME]
+        return [_DEFAULT_NAME]
     else:
         return [item["name"] for item in exp_settings]
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
 def get_experiment_settings(
-        experiment=_DEFAULT_EXP_NAME
+        experiment=_DEFAULT_NAME
     ):
     
     settings = get_settings(expmgmt.config.config.get(expmgmt.config.settings._LOCAL_SETTINGS_EXP))
@@ -330,10 +328,10 @@ def get_experiment_settings(
 
     if experiment in get_experiments_name():
         default_setting = expmgmt.utils.structures.get_dict_elements(settings, 
-            "name", [_DEFAULT_EXP_NAME, experiment], update=True)
+            "name", [_DEFAULT_NAME, experiment], update=True)
 
-        expmgmt.utils.structures.update_dict(default_setting, expmgmt.config.config.get_section(_DEFAULT_EXP_NAME))
-    elif experiment != _DEFAULT_EXP_NAME:
+        expmgmt.utils.structures.update_dict(default_setting, expmgmt.config.config.get_section(_DEFAULT_NAME))
+    elif experiment != _DEFAULT_NAME:
         raise expmgmt.debug.exceptions.DefaultExperimentMissing(experiment)
     
     return default_setting
@@ -445,42 +443,49 @@ def get_dataset_meta_settings(dataset, setting):
 # ---------------------------------------------------------------------------
 def set_dataset(
         dataset,
-        predefined = "",
+        setting,
         sort=True
     ):
-    dataset_obj = get_dataset_setting(dataset)
-
-    data = dict()
-    dataset_settings = dataset_obj.keys()
-    if predefined:
-        dataset_settings = [predefined]
-    for setting in dataset_settings:
-        setting_obj = dataset_obj[setting]
-        
-        for setting_type in setting_obj.keys():
-
-            setting_type_obj = setting_obj[setting_type]
-            if setting_type == "meta":
-                x=1 # @todo[change]:  
-            else: 
-                path = os.path.join(get_dataset_settings_dir(dataset),"{0}-{1}.txt".format(setting, setting_type))
-                if predefined and (not setting_type in data.keys()):
-                    data[setting_type] = get_data(os.path.join(get_dataset_settings_dir(dataset),"default-{0}.txt".format(setting_type)))
-
-                if not setting_type in data.keys():
-                    data[setting_type] = get_data_tensor(setting_type_obj, sort=sort)
-                    with open(path, "w+") as f:
-                        for line in data[setting_type]:
-                            f.write(" ".join("{}".format(x) for x in line)+"\n")
+    
+    default = dict()
+    
+    datasets = get_dataset_setting(dataset)
+    setting_keys= list(datasets.keys())
+    if setting != expmgmt.config.settings._DEFAULT_NAME:
+        setting_keys = [setting]
+    else:
+        for t in datasets[setting].keys():
+            if t != "meta":
+                logger.debug("Create setting '{}' of type '{}'".format(setting, t))
+                path = os.path.join(get_dataset_settings_dir(dataset), "{}-{}.txt".format(setting, t))
+                if os.path.isfile(path):
+                    default[t] = get_data(path)
                 else:
-                    data_tensor = data[setting_type].copy()
-                    for item in setting_type_obj:
-                            task_func = getattr(expmgmt.data.data, item["func"])
-                            data_tensor = task_func(data_tensor, *item["parameter"])
+                    default[t] = get_data_tensor(datasets[setting][t], sort=sort)
 
-                    with open(path, "w+") as f:
-                        for line in data_tensor:
-                            f.write(" ".join("{}".format(x) for x in line)+"\n")
+                with open(path, "w+") as f:
+                    for line in default[t]:
+                        f.write(" ".join("{}".format(x) for x in line)+"\n")  
+        
+        setting_keys.remove(expmgmt.config.settings._DEFAULT_NAME)
+    
+    for s in setting_keys:
+        for t in datasets[s].keys():
+            if t != "meta":
+                logger.debug("Create setting '{}' of type '{}'".format(s, t))
+                path = os.path.join(get_dataset_settings_dir(dataset),"{}-{}.txt".format(s, t))
+
+                data_tensor = default[t].copy()
+                try:
+                    for item in datasets[s][t]:
+                        task_func = getattr(expmgmt.data.data, item["func"])
+                        data_tensor = task_func(data_tensor, *item["parameter"])
+                except KeyError:
+                    raise expmgmt.debug.exceptions.KeyErrorJson("func")
+
+                with open(path, "w+") as f:
+                    for line in data_tensor:
+                        f.write(" ".join("{}".format(x) for x in line)+"\n")
     return  
 
 #   function ----------------------------------------------------------------

@@ -28,8 +28,8 @@ def run(
 
     if dataset in expmgmt.config.settings.get_datasets():
         expmgmt.config.settings.set_dataset(
-            dataset=dataset,
-            predefined=setting
+            dataset,
+            setting
         )
 
 #   function ----------------------------------------------------------------
@@ -45,15 +45,19 @@ def run(
     "-d",
     "--data_set",
     help="Pass the trainings, test and validation of the specified dataset setting",
-    type=click.Choice(["default",*expmgmt.config.settings.get_datasets()]),
-    default="default"
+    type=click.Choice([
+        expmgmt.config.settings._DEFAULT_NAME,
+        *expmgmt.config.settings.get_datasets()
+        ]
+    ),
+    default=expmgmt.config.settings._DEFAULT_NAME
 )
 @click.option(
     "-s",
     "--setting",
     help="Pass the trainings, test and validation of the specified dataset setting",
     type=str,
-    default="default"
+    default=expmgmt.config.settings._DEFAULT_NAME
 )
 def cli(
         data_set,
@@ -61,24 +65,13 @@ def cli(
     ):
     """List experiments' properties"""
 
-    if data_set == "default":
-        run_data_set = expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_DATASET)
-        run_setting =  expmgmt.config.config.get(expmgmt.config.settings._DEFAULT_SETTING)
-    elif not data_set == "none":
-        run_data_set = data_set
-        run_setting = setting
-        if not setting in expmgmt.config.settings.get_dataset_settings(run_data_set):
-            raise ValueError("Error: Invalid value for '-d' / '--data_set': invalid choice: {0}. (choose from {1})".format(
-                setting, 
-                expmgmt.config.settings.get_dataset_settings(run_data_set)
-                )
-            ) # @todo[generalize]: also in expmgmt
-
-    if setting == "default":
-        run_data_set = data_set
-        run_setting = ""
+    if not setting in expmgmt.config.settings.get_dataset_settings(data_set):
+        raise expmgmt.debug.exceptions.ArgumentError(
+            setting, 
+            expmgmt.config.settings.get_dataset_settings(data_set)
+        )
 
     run(
-        run_data_set,
-        run_setting
+        data_set,
+        setting
     )
