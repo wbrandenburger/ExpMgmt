@@ -45,7 +45,8 @@ def pass_settings(
     experiment_setting =  expmgmt.config.settings.get_experiment_settings(
         experiment=experiment
     )
-
+    print(experiment_setting)
+    print(data_set)
     if  data_set == expmgmt.config.settings._DEFAULT_NAME:
         try:
             data_set = experiment_setting["data"]["data-set"]
@@ -53,12 +54,14 @@ def pass_settings(
         except KeyError:
             raise expmgmt.debug.exceptions.KeyErrorJson("data")
 
-    if data_set and setting :
+    if data_set and setting:
         experiment_setting.update(
             expmgmt.config.settings.get_dataset_setting_files(
                 data_set, setting
             )
         )
+        print("huhu")
+        print(experiment_setting)
         experiment_setting.update(
             expmgmt.config.settings.get_dataset_meta_settings(
                 data_set, setting
@@ -136,6 +139,7 @@ def run(
         *expmgmt.config.settings.get_datasets()
         ]
     ),
+    default=expmgmt.config.settings._DEFAULT_NAME
 )
 @click.option(
     "-s",
@@ -144,30 +148,19 @@ def run(
     type=str,
     default=expmgmt.config.settings._DEFAULT_NAME
 )
-@click.option(
-    "--no_data",
-    help="Pass no trainings, test and validation data",
-    is_flag=True,
-    default=False
-)
 def cli(
         arguments,
         experiment,
         data_set,
-        setting,
-        no_data
+        setting
     ):
     """Run an arbitrary shell command in the library folder"""
 
-    if not data_set:
-        data_set = None
-        setting = None
-    else:
-        if not setting in expmgmt.config.settings.get_dataset_settings(data_set):
-            raise expmgmt.debug.exceptions.ArgumentError(
-                setting, 
-                expmgmt.config.settings.get_dataset_settings(data_set)
-            )
+    if not setting in expmgmt.config.settings.get_dataset_settings(data_set):
+        raise expmgmt.debug.exceptions.ArgumentError(
+            setting, 
+            expmgmt.config.settings.get_dataset_settings(data_set)
+        )
 
     run(
         arguments=arguments,
