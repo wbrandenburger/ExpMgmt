@@ -448,44 +448,50 @@ def set_dataset(
     ):
     
     default = dict()
-    
     datasets = get_dataset_setting(dataset)
-    setting_keys= list(datasets.keys())
-    if setting != expmgmt.config.settings._DEFAULT_NAME:
-        setting_keys = [setting]
-    else:
-        for t in datasets[setting].keys():
-            if t != "meta":
-                logger.debug("Create setting '{}' of type '{}'".format(setting, t))
-                path = os.path.join(get_dataset_settings_dir(dataset), "{}-{}.txt".format(setting, t))
-                if os.path.isfile(path):
-                    default[t] = get_data(path)
-                else:
-                    default[t] = get_data_tensor(datasets[setting][t], sort=sort)
 
-                with open(path, "w+") as f:
-                    for line in default[t]:
-                        f.write(" ".join("{}".format(x) for x in line)+"\n")  
+    setting = expmgmt.config.settings._DEFAULT_NAME
+    for t in datasets[expmgmt.config.settings._DEFAULT_NAME].keys():
+        if t == "meta":
+            continue
+
+        logger.debug("Create setting '{}' of type '{}'".format(setting, t))
+        path = os.path.join(get_dataset_settings_dir(dataset), "{}-{}.txt".format(setting, t))
+
+        if os.path.isfile(path) and setting != setting:
+            default[t] = get_data(path)
+        else:
+            default[t] = get_data_tensor(datasets[setting][t], sort=sort)
+
+        with open(path, "w+") as f:
+            for line in default[t]:
+                f.write(" ".join("{}".format(x) for x in line)+"\n")  
         
+    if setting == expmgmt.config.settings._DEFAULT_NAME:
+        setting_keys= list(datasets.keys())
         setting_keys.remove(expmgmt.config.settings._DEFAULT_NAME)
-    
+    else:
+        setting_keys = [setting]
+
     for s in setting_keys:
         for t in datasets[s].keys():
-            if t != "meta":
-                logger.debug("Create setting '{}' of type '{}'".format(s, t))
-                path = os.path.join(get_dataset_settings_dir(dataset),"{}-{}.txt".format(s, t))
+            if t == "meta":
+                continue
 
-                data_tensor = default[t].copy()
-                try:
-                    for item in datasets[s][t]:
-                        task_func = getattr(expmgmt.data.data, item["func"])
-                        data_tensor = task_func(data_tensor, *item["parameter"])
-                except KeyError:
-                    raise expmgmt.debug.exceptions.KeyErrorJson("func")
+            logger.debug("Create setting '{}' of type '{}'".format(s, t))
+            path = os.path.join(get_dataset_settings_dir(dataset),"{}-{}.txt".format(s, t))
 
-                with open(path, "w+") as f:
-                    for line in data_tensor:
-                        f.write(" ".join("{}".format(x) for x in line)+"\n")
+            data_tensor = default[t].copy()
+            try:
+                for item in datasets[s][t]:
+                    task_func = getattr(expmgmt.data.data, item["func"])
+                    data_tensor = task_func(data_tensor, *item["parameter"])
+            except KeyError:
+                raise expmgmt.debug.exceptions.KeyErrorJson("func")
+
+            with open(path, "w+") as f:
+                for line in data_tensor:
+                    f.write(" ".join("{}".format(x) for x in line)+"\n")
     return  
 
 #   function ----------------------------------------------------------------
@@ -522,6 +528,7 @@ def get_data_tensor(object, sort=True):
 
         lists = list()
         metadata = dict()
+
         lists.append(get_file_list(obj_item["dir"], obj_item["ext"], sort=sort))
         
         file_list = get_file_list(obj_item["dir"], obj_item["ext"], sort=sort)
