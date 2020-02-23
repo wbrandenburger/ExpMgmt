@@ -30,8 +30,8 @@ logger = logging.getLogger('run')
 # ---------------------------------------------------------------------------
 def pass_settings(
         experiment,
-        data_set = None,
-        setting = None,
+        data_set = expmgmt.config.settings._DEFAULT_NAME,
+        setting = expmgmt.config.settings._DEFAULT_NAME,
     ):
 
     # create a temporary file
@@ -149,11 +149,18 @@ def run(
     type=str,
     default=expmgmt.config.settings._DEFAULT_NAME
 )
+@click.option(
+    "--no_data",
+    help="Set flag to use no data",
+    is_flag=True,
+    default=False
+)
 def cli(
         arguments,
         experiment,
         data_set,
-        setting
+        setting,
+        no_data
     ):
     """Run an arbitrary shell command in the library folder"""
 
@@ -162,6 +169,9 @@ def cli(
             setting, 
             expmgmt.config.settings.get_dataset_settings(data_set)
         )
+
+    if no_data:
+        data_set = setting = None
 
     run(
         arguments=arguments,
