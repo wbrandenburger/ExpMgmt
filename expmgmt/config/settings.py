@@ -11,6 +11,7 @@ import expmgmt.utils.structures
 import expmgmt.data.data
 import expmgmt.utils.regex
 import expmgmt.debug.exceptions
+import expmgmt.utils.dictparser
 
 from collections import OrderedDict
 import logging
@@ -390,7 +391,6 @@ def get_datasets():
         for item in items:
             if item[0] == "name":
                 datasets.append(item[1])
-
     return datasets
 
 #   function ----------------------------------------------------------------
@@ -448,24 +448,26 @@ def set_dataset(
     ):
     
     default = dict()
-    datasets = get_dataset_setting(dataset)
+    datasets = expmgmt.utils.dictparser.DictParser(
+        get_dataset_setting(dataset)
+    ).interpolate()
 
-    setting = expmgmt.config.settings._DEFAULT_NAME
+    default_setting = expmgmt.config.settings._DEFAULT_NAME
     for t in datasets[expmgmt.config.settings._DEFAULT_NAME].keys():
         if t == "meta":
             continue
 
-        logger.debug("Create setting '{}' of type '{}'".format(setting, t))
-        path = os.path.join(get_dataset_settings_dir(dataset), "{}-{}.txt".format(setting, t))
+        logger.debug("Create setting '{}' of type '{}'".format(default_setting, t))
+        path = os.path.join(get_dataset_settings_dir(dataset), "{}-{}.txt".format(default_setting, t))
 
-        if os.path.isfile(path) and setting != setting:
+        if os.path.isfile(path) and setting != default_setting:
             default[t] = get_data(path)
         else:
-            default[t] = get_data_tensor(datasets[setting][t], sort=sort)
+            default[t] = get_data_tensor(datasets[default_setting][t], sort=sort)
 
-        with open(path, "w+") as f:
-            for line in default[t]:
-                f.write(" ".join("{}".format(x) for x in line)+"\n")  
+            with open(path, "w+") as f:
+                for line in default[t]:
+                    f.write(" ".join("{}".format(x) for x in line)+"\n")  
         
     if setting == expmgmt.config.settings._DEFAULT_NAME:
         setting_keys= list(datasets.keys())

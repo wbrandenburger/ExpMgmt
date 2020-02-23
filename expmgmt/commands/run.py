@@ -8,6 +8,7 @@ import expmgmt.config.config
 import expmgmt.config.settings
 import expmgmt.config.experiment
 import expmgmt.utils.yaml
+import expmgmt.utils.dictparser
 import expmgmt.debug.exceptions
 
 import click
@@ -72,7 +73,10 @@ def pass_settings(
 
     # write user defined settings to tempory file
     logger.info("Write experiment and data settings to file '{0}'".format(tmp_object[1]))
-    expmgmt.utils.yaml.data_to_yaml(tmp_object[1], experiment_setting)
+    expmgmt.utils.yaml.data_to_yaml(
+        tmp_object[1], 
+        expmgmt.utils.dictparser.DictParser(experiment_setting).interpolate()
+    )
 
     return tmp_object[1]
 
