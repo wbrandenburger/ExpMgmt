@@ -108,10 +108,8 @@ def run(
     if arguments:
         cmd_args.append(" ".join(arguments))
 
-    print(cmd_args)
     if not "--task_set" in cmd_args and not "--task" in cmd_args and task:      
         cmd_args.extend(["--task_set", task["task_set"], "--task", task["task"]]) 
-    print(cmd_args)
     cmd = " ".join(cmd_args)
     
     logger.debug("Running main experiment file {0}.".format(path)) # @log
