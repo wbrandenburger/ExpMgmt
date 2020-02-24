@@ -66,8 +66,11 @@ def pass_settings(
             )
         )
 
+    task = experiment_setting["task"] if "task" in experiment_setting.keys() else None
+
     try:
         experiment_setting.pop("data", None)
+        experiment_setting.pop("task", None)
     except KeyError:
         pass
 
@@ -78,7 +81,7 @@ def pass_settings(
         expmgmt.utils.dictparser.DictParser(experiment_setting).interpolate()
     )
 
-    return tmp_object[1]
+    return tmp_object[1], task
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
@@ -90,11 +93,12 @@ def run(
     ):
 
     # get temporary file with user defined settings
-    tmp_settings_path = pass_settings(experiment, data_set, setting)
+    tmp_settings_path, task  = pass_settings(experiment, data_set, setting)
 
     path = expmgmt.config.config.get(
         expmgmt.config.settings._MAIN_PROJ_FILE, required=False
     )
+
     if not os.path.exists(path):
         logger.warning("Running main experiment file: File {0} does not exist.".format(path)) # @log
         cmd_args = [path, "run", tmp_settings_path]
@@ -103,6 +107,11 @@ def run(
 
     if arguments:
         cmd_args.append(" ".join(arguments))
+
+    print(cmd_args)
+    if not "--task_set" in cmd_args and not "--task" in cmd_args and task:      
+        cmd_args.extend(["--task_set", task["task_set"], "--task", task["task"]]) 
+    print(cmd_args)
     cmd = " ".join(cmd_args)
     
     logger.debug("Running main experiment file {0}.".format(path)) # @log
