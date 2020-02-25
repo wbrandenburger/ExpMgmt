@@ -32,6 +32,7 @@ def pass_settings(
         experiment,
         data_set = expmgmt.config.settings._DEFAULT_NAME,
         setting = expmgmt.config.settings._DEFAULT_NAME,
+        task = None
     ):
 
     # create a temporary file
@@ -47,29 +48,22 @@ def pass_settings(
         experiment=experiment
     )
 
-    if  data_set == expmgmt.config.settings._DEFAULT_NAME:
-        try:
+    try:
+        if data_set == expmgmt.config.settings._DEFAULT_NAME:
             data_set = experiment_setting["data"]["data-set"]
             setting = experiment_setting["data"]["setting"]
-        except KeyError:
-            raise expmgmt.debug.exceptions.KeyErrorJson("data")
+        
+            experiment_setting.update(expmgmt.config.settings.get_dataset_setting_files(data_set, setting))
+            experiment_setting.update(expmgmt.config.settings.get_dataset_meta_settings(data_set, setting))
 
-    if data_set and setting:
-        experiment_setting.update(
-            expmgmt.config.settings.get_dataset_setting_files(
-                data_set, setting
-            )
-        )
-        experiment_setting.update(
-            expmgmt.config.settings.get_dataset_meta_settings(
-                data_set, setting
-            )
-        )
 
-    task = experiment_setting["task"] if "task" in experiment_setting.keys() else None
-
-    try:
         experiment_setting.pop("data", None)
+    except KeyError:
+        # raise expmgmt.debug.exceptions.KeyErrorJson("data")
+        pass
+
+    try:      
+        task = experiment_setting["task"]
         experiment_setting.pop("task", None)
     except KeyError:
         pass
