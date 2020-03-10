@@ -103,7 +103,6 @@ def run(
         cmd_args.append(" ".join(arguments))
 
     if not "--task_set" in arguments and not "--task" in arguments and task:
-        print("hallo")    
         cmd_args.extend(["--task_set", task["task_set"], "--task", task["task"]])
     
     cmd = " ".join(cmd_args)
