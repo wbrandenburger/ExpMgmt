@@ -23,23 +23,34 @@ def get_sub_data_tensor(data_tensor, index_list, sort=False):
 
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------
-def get_data_tensor_regex(data_tensor, regex, group):
+def get_data_tensor_regex(data_tensor, regex, group, folder=False, number=None):
 
     regex = regex if isinstance(regex, list) else [regex]
     group = group if isinstance(regex, list) else [group]
 
-    data_tensor_dict = dict()
-    for item_tensor in data_tensor: 
-        item = os.path.basename(item_tensor[0])
+    data_tensor_dict = list()
+    data_tensor_list = list()
+    num = 1
+    for item_tensor in data_tensor:
+
+        item = item_tensor[0]
+        if not folder:
+            item = os.path.basename(item_tensor[0])
+            
         for r, g in zip(regex, group):
             if item:
                 res = re.compile(r)
                 result = res.match(item)
                 item = result.group(g) if result else None
-                if not item in data_tensor_dict.keys():
-                    data_tensor_dict[item] = item_tensor
-
-    return [ v for v in data_tensor_dict.values() ]
+                if not item in data_tensor_dict:
+                    num = 1
+                    data_tensor_dict.append(item)
+                    data_tensor_list.append(item_tensor)
+                elif number is not None and num < number:
+                    num += 1
+                    data_tensor_list.append(item_tensor)
+                    
+    return  data_tensor_list
     
 #   function ----------------------------------------------------------------
 # ---------------------------------------------------------------------------

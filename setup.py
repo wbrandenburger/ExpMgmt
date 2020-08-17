@@ -31,6 +31,7 @@ setuptools.setup(
     license=expmgmt.__license__,
     url="https://github.com/wbrandenburger/ExpMgmt",
     install_requires=[
+        "natsort>=7.0.0"
         # - python project packages - 
         # "colorama>=0.4",
         # "click>=7.0.0",

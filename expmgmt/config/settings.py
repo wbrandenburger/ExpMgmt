@@ -15,6 +15,7 @@ import expmgmt.utils.dictparser
 
 from collections import OrderedDict
 import logging
+import natsort
 import os
 import sys
 import yaml
@@ -503,7 +504,8 @@ def get_file_list(path, ext, sort=True):
 
     file_list = list()
     for item in path:
-        for f in os.listdir(item):
+        dir_list = natsort.natsorted(os.listdir(item))
+        for f in dir_list:
             full_path = os.path.join(item, f)
             if os.path.isfile(full_path) and full_path.endswith(ext):
                 file_list.append(full_path)
